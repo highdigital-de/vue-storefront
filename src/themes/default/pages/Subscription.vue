@@ -20,6 +20,9 @@
           <div class="row center-xs">
             <button @click="clickGetSubscription">Get Subscription</button>
           </div>
+          <div class="row center-xs">
+            <button @click="clickGetProducts">Get Products</button>
+          </div>
         </section>
         <section class="container" v-if="hasSubscription">
           <h2>Subscription loaded:</h2>

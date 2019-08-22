@@ -23,6 +23,20 @@ const actions: ActionTree<Subscription, RootState> = {
       context.commit(types.SUBSCRIPTION_ADD, {subscription: task.result})
       return task
     })
+  },
+  getProducts (context) {
+    console.log('action get products')
+    return TaskQueue.execute({ url: config.subscription.products_endpoint,
+      payload: {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        mode: 'cors',
+      },
+    }).then((task: Task) => {
+      Logger.debug('got task products' + task)()
+      context.commit(types.SUBSCRIPTION_PRODUCTS_ADD, {products: task.result})
+      return task
+    })
   }
 }
 

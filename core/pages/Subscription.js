@@ -38,6 +38,10 @@ export default {
     clickGetSubscription () {
       console.log('click get sub')
       return this.$store.dispatch('subscription/getSubscription')
+    },
+    clickGetProducts () {
+      console.log('click get products')
+      return this.$store.dispatch('subscription/getProducts')
     }
   },
   metaInfo () {

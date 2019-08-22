@@ -13,6 +13,11 @@ const mutations: MutationTree<CartState> = {
     Vue.prototype.$bus.$emit('subscription-before-add', { subscription: subscription })
     state.subscription = subscription
   },
+  [types.SUBSCRIPTION_PRODUCTS_ADD](state, { products }) {
+    console.log('commit add products', products)
+    Vue.prototype.$bus.$emit('subscription-befores-product-add', { products: products })
+    state.products = products
+  },
 }
 
 export default mutations
