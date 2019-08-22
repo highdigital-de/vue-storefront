@@ -1,6 +1,7 @@
 import config from 'config'
 const Home = () => import(/* webpackChunkName: "vsf-home" */ 'theme/pages/Home.vue')
 const PageNotFound = () => import(/* webpackChunkName: "vsf-not-found" */ 'theme/pages/PageNotFound.vue')
+const Subscription = () => import(/* webpackChunkName: "vsf-subscription" */ 'theme/pages/Subscription.vue')
 const ErrorPage = () => import(/* webpackChunkName: "vsf-error" */ 'theme/pages/Error.vue')
 const Product = () => import(/* webpackChunkName: "vsf-product" */ 'theme/pages/Product.vue')
 const Category = () => import(/* webpackChunkName: "vsf-category" */ 'theme/pages/Category.vue')
@@ -38,6 +39,7 @@ let routes = [
   { name: 'contact', path: '/contact', component: Static, props: {page: 'contact', title: 'Contact'} },
   { name: 'compare', path: '/compare', component: Compare, props: {title: 'Compare Products'} },
   { name: 'page-not-found', path: '/page-not-found', component: PageNotFound },
+  { name: 'subscription', path: '/subscription', component: Subscription },
   { name: 'error', path: '/error', component: ErrorPage, meta: { layout: 'minimal' } },
   { name: 'custom-cms-page', path: '/custom-cms-page', component: CustomCmsPage },
   { name: 'cms-block-demo-page-ssr', path: '/cms-block-demo-page-ssr', component: CmsBlockDemoPageSsr },
