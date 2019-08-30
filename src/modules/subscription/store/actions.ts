@@ -25,7 +25,7 @@ const actions: ActionTree<Subscription, RootState> = {
     })
   },
   getProducts (context) {
-    console.log('action get products')
+    console.log('action API1 get products')
     return TaskQueue.execute({ url: config.subscription.products_endpoint,
       payload: {
         method: 'GET',
@@ -35,6 +35,20 @@ const actions: ActionTree<Subscription, RootState> = {
     }).then((task: Task) => {
       Logger.debug('got task products' + task)()
       context.commit(types.SUBSCRIPTION_PRODUCTS_ADD, {products: task.result})
+      return task
+    })
+  },
+  getCoupons (context) {
+    console.log('action API2 get coupons')
+    return TaskQueue.execute({ url: config.subscription.coupons_endpoint,
+      payload: {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        mode: 'cors',
+      },
+    }).then((task: Task) => {
+      Logger.debug('got task coupon' + task)()
+      context.commit(types.SUBSCRIPTION_COUPONS_ADD, {coupons: task.result.coupons})
       return task
     })
   }

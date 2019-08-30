@@ -8,7 +8,8 @@ export const module: Module<SubscriptionState, any> = {
   namespaced: true,
   state: {
     subscription: null,
-    products: []
+    products: [],
+    coupons: []
   },
   getters,
   actions,
