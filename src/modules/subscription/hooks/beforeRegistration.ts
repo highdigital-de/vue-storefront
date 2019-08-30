@@ -6,7 +6,7 @@ export function beforeRegistration({ Vue, config, store, isServer }) {
   const storeView = currentStoreView()
   const dbNamePrefix = storeView.storeCode ? storeView.storeCode + '-' : ''
 
-  Vue.prototype.$db.cartsCollection = new UniversalStorage(localForage.createInstance({
+  Vue.prototype.$db.subscriptionCollection = new UniversalStorage(localForage.createInstance({
     name: (config.storeViews.commonCache ? '' : dbNamePrefix) + 'shop',
     storeName: 'subscription',
     driver: localForage[config.localForage.defaultDrivers['subscription']]
