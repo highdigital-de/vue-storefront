@@ -51,6 +51,20 @@ const actions: ActionTree<Subscription, RootState> = {
       context.commit(types.SUBSCRIPTION_COUPONS_ADD, {coupons: task.result.coupons})
       return task
     })
+  },
+  getDelivery (context) {
+    console.log('action API2 get delivery')
+    return TaskQueue.execute({ url: config.subscription.delivery_endpoint,
+      payload: {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        mode: 'cors',
+      },
+    }).then((task: Task) => {
+      Logger.debug('got task coupon' + task)()
+      context.commit(types.SUBSCRIPTION_DELIVERY_CYCLES_ADD, {delivery: task.result.delivery_cycles})
+      return task
+    })
   }
 }
 

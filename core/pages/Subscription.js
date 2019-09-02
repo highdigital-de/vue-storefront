@@ -46,6 +46,10 @@ export default {
     clickGetCoupons () {
       console.log('click get Coupons')
       return this.$store.dispatch('subscription/getCoupons')
+    },
+    clickGetDelivery () {
+      console.log('click get Delivery')
+      return this.$store.dispatch('subscription/getDelivery')
     }
   },
   metaInfo () {

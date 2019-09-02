@@ -26,6 +26,9 @@
           <div class="row center-xs">
             <button @click="clickGetCoupons">Get Coupons</button>
           </div>
+          <div class="row center-xs">
+            <button @click="clickGetDelivery">Get Delivery</button>
+          </div>
         </section>
         <section class="container" v-if="hasSubscription">
           <h2>Subscription loaded:</h2>

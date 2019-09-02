@@ -9,7 +9,8 @@ export const module: Module<SubscriptionState, any> = {
   state: {
     subscription: null,
     products: [],
-    coupons: []
+    coupons: [],
+    deliveryCycles: []
   },
   getters,
   actions,
