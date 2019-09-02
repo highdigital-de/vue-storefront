@@ -3,8 +3,8 @@
 ## How to add a API Call for Subscription
 * Add a method in `core/pages/Subscription.js`
 * Add a button or something with a call in `src/themes/default/pages/Subscription.vue`
-* Add a action in `src/modules/subscription/store/actions.ts``
-* Add a mutation type in `src/modules/subscription/store/mutation-types.ts``
+* Add a action in `src/modules/subscription/store/actions.ts`
+* Add a mutation type in `src/modules/subscription/store/mutation-types.ts`
 * Add a mutation in `src/modules/subscription/store/mutations.ts`
 * Change State Type in `src/modules/subscription/types/SubscriptionState.ts`
 * Change State in `src/modules/subscription/store/index.ts`
