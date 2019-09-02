@@ -18,13 +18,25 @@
             <div v-for="call in apiCalls" :key="call" class="col-md-3">{{ call }}</div>
           </div>
           <div class="row center-xs">
-            <button @click="clickGetSubscription">Get Subscription</button>
-          </div>
-          <div class="row center-xs">
             <button @click="clickGetMeta">Get Meta</button>
           </div>
           <div class="row center-xs">
             <button @click="clickPostCartDelivery">Post Cart Delivery</button>
+          </div>
+          <div class="row center-xs">
+            <button @click="clickPostPaymentmethodUpdate">Post Paymentmethod Update</button>
+          </div>
+          <div class="row center-xs">
+            <button @click="clickGetSubscription">Get Subscription</button>
+          </div>
+          <div class="row center-xs">
+            <button @click="clickPostDelete">Post Delete</button>
+          </div>
+          <div class="row center-xs">
+            <button @click="clickPostDelivery">Post  Delivery</button>
+          </div>
+          <div class="row center-xs">
+            <button @click="clickPostUpdate">Post Update</button>
           </div>
         </section>
         <section class="container" v-if="hasSubscription">

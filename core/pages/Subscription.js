@@ -51,6 +51,46 @@ export default {
       }
       console.log('click post cart delivery, body:', body)
       return this.$store.dispatch('subscription/postCartDelivery', body)
+    },
+    clickPostPaymentmethodUpdate () {
+      let body = {
+        paymentmethod: {
+          id: 2
+        }
+      }
+      console.log('click post cart delivery, body:', body)
+      return this.$store.dispatch('subscription/postPaymentmethodUpdate', body)
+    },
+    clickPostDelete () {
+      let body = {
+        subscription: {
+          id: 2
+        }
+      }
+      console.log('click post cart delivery, body:', body)
+      return this.$store.dispatch('subscription/postDelete', body)
+    },
+    clickPostDelivery () {
+      let body = {
+        delivery: {
+          id: 2
+        }
+      }
+      console.log('click post cart delivery, body:', body)
+      return this.$store.dispatch('subscription/postDelivery', body)
+    },
+    clickPostUpdate () {
+      let body = {
+        delivery_cycle: {
+          id: 2
+        },
+        products: [
+          'sku123',
+          'sku789'
+        ]
+      }
+      console.log('click post cart delivery, body:', body)
+      return this.$store.dispatch('subscription/postUpdate', body)
     }
   },
   metaInfo () {
