@@ -40,6 +40,21 @@ const actions: ActionTree<Subscription, RootState> = {
       return task
     })
   },
+  postCartDelivery (context, body) {
+    console.log('action API1 post cart delivery')
+    return TaskQueue.execute({ url: config.subscription.cart_delivery_endpoint,
+      payload: {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        mode: 'cors',
+        body: JSON.stringify(body)
+      },
+    }).then((task: Task) => {
+      Logger.debug('got task cart delivery' + task)()
+      // TODO: Do something with new delivery cycle
+      return task
+    })
+  },
 }
 
 export default actions

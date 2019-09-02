@@ -23,6 +23,9 @@
           <div class="row center-xs">
             <button @click="clickGetMeta">Get Meta</button>
           </div>
+          <div class="row center-xs">
+            <button @click="clickPostCartDelivery">Post Cart Delivery</button>
+          </div>
         </section>
         <section class="container" v-if="hasSubscription">
           <h2>Subscription loaded:</h2>

@@ -42,6 +42,15 @@ export default {
     clickGetMeta () {
       console.log('click get meta')
       return this.$store.dispatch('subscription/getMeta')
+    },
+    clickPostCartDelivery () {
+      let body = {
+        delivery_cycle: {
+          id: 2
+        }
+      }
+      console.log('click post cart delivery, body:', body)
+      return this.$store.dispatch('subscription/postCartDelivery', body)
     }
   },
   metaInfo () {
