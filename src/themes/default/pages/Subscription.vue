@@ -21,13 +21,7 @@
             <button @click="clickGetSubscription">Get Subscription</button>
           </div>
           <div class="row center-xs">
-            <button @click="clickGetProducts">Get Products</button>
-          </div>
-          <div class="row center-xs">
-            <button @click="clickGetCoupons">Get Coupons</button>
-          </div>
-          <div class="row center-xs">
-            <button @click="clickGetDelivery">Get Delivery</button>
+            <button @click="clickGetMeta">Get Meta</button>
           </div>
         </section>
         <section class="container" v-if="hasSubscription">

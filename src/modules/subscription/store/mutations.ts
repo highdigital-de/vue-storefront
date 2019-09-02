@@ -23,10 +23,10 @@ const mutations: MutationTree<CartState> = {
     Vue.prototype.$bus.$emit('subscription-befores-coupons-add', { coupons: coupons })
     state.coupons = coupons
   },
-  [types.SUBSCRIPTION_DELIVERY_CYCLES_ADD](state, { delivery }) {
-    console.log('commit add delivery cycles', delivery)
-    Vue.prototype.$bus.$emit('subscription-befores-delivery-cycles-add', { delivery: delivery })
-    state.deliveryCycles = delivery.deliveryCycles
+  [types.SUBSCRIPTION_DELIVERY_CYCLES_ADD](state, { deliveryCycles }) {
+    console.log('commit add delivery cycles', deliveryCycles)
+    Vue.prototype.$bus.$emit('subscription-befores-delivery-cycles-add', { deliveryCycles: deliveryCycles })
+    state.deliveryCycles = deliveryCycles
   },
 }
 

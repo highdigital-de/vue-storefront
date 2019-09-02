@@ -24,48 +24,22 @@ const actions: ActionTree<Subscription, RootState> = {
       return task
     })
   },
-  getProducts (context) {
-    console.log('action API1 get products')
-    return TaskQueue.execute({ url: config.subscription.products_endpoint,
+  getMeta (context) {
+    console.log('action API1 get meta')
+    return TaskQueue.execute({ url: config.subscription.meta_endpoint,
       payload: {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
       },
     }).then((task: Task) => {
-      Logger.debug('got task products' + task)()
-      context.commit(types.SUBSCRIPTION_PRODUCTS_ADD, {products: task.result})
-      return task
-    })
-  },
-  getCoupons (context) {
-    console.log('action API2 get coupons')
-    return TaskQueue.execute({ url: config.subscription.coupons_endpoint,
-      payload: {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        mode: 'cors',
-      },
-    }).then((task: Task) => {
-      Logger.debug('got task coupon' + task)()
+      Logger.debug('got task meta' + task)()
+      context.commit(types.SUBSCRIPTION_PRODUCTS_ADD, {products: task.result.products})
       context.commit(types.SUBSCRIPTION_COUPONS_ADD, {coupons: task.result.coupons})
+      context.commit(types.SUBSCRIPTION_DELIVERY_CYCLES_ADD, {deliveryCycles: task.result.delivery_cycles})
       return task
     })
   },
-  getDelivery (context) {
-    console.log('action API2 get delivery')
-    return TaskQueue.execute({ url: config.subscription.delivery_endpoint,
-      payload: {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        mode: 'cors',
-      },
-    }).then((task: Task) => {
-      Logger.debug('got task coupon' + task)()
-      context.commit(types.SUBSCRIPTION_DELIVERY_CYCLES_ADD, {delivery: task.result.delivery_cycles})
-      return task
-    })
-  }
 }
 
 export default actions
