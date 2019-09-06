@@ -13,6 +13,7 @@ import { RecentlyViewed } from '@vue-storefront/core/modules/recently-viewed'
 import { Url } from '@vue-storefront/core/modules/url'
 import { Homepage } from "./homepage"
 import { Claims } from './claims'
+import { CartExtendedSubscription } from './cart-extension-subscription'
 import { PromotedOffers } from './promoted-offers'
 import { Ui } from './ui-store'
 // import { GoogleAnalytics } from './google-analytics';
@@ -76,6 +77,7 @@ export const registerModules: VueStorefrontModule[] = [
   AmpRenderer,
   InstantCheckout,
   Url,
-  Subscription
+  Subscription,
+  CartExtendedSubscription
   // Example
 ]
