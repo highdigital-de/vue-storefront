@@ -38,6 +38,9 @@
           <div class="row center-xs">
             <button @click="clickPostUpdate">Post Update</button>
           </div>
+          <div class="row center-xs">
+            <button @click="clickSetSubscriptionFlag">Set Subscription Flag</button>
+          </div>
         </section>
         <section class="container" v-if="hasSubscription">
           <h2>Subscription loaded:</h2>

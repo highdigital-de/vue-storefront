@@ -1,5 +1,5 @@
-import { ExampleState } from '../types/ExampleState'
+import { CartExtensionSubscriptionState } from '../types/CartExtensionSubscriptionState'
 
-export const state: ExampleState = {
-  users: null
+export const state: CartExtensionSubscriptionState = {
+  isSubscriptionFlag: false
 }

@@ -1,4 +1,4 @@
-import { ExampleState } from '../types/ExampleState'
+import { CartExtensionSubscriptionState } from '../types/CartExtensionSubscriptionState'
 import { GetterTree } from 'vuex';
 
-export const getters: GetterTree<ExampleState, any> = {}
+export const getters: GetterTree<CartExtensionSubscriptionState, any> = {}

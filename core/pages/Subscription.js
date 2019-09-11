@@ -91,6 +91,10 @@ export default {
       }
       console.log('click post cart delivery, body:', body)
       return this.$store.dispatch('subscription/postUpdate', body)
+    },
+    clickSetSubscriptionFlag () {
+      console.log('clicked clickSetSubscriptionFlag, current value: ', this.$store.state.cart.isSubscriptionFlag)
+      this.$store.commit('cart/cartExtensionSubscription/SET_SUBSCRIPTION_FLAG', !this.$store.state.cart.isSubscriptionFlag)
     }
   },
   metaInfo () {

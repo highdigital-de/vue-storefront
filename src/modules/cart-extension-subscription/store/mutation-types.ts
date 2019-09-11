@@ -1,2 +1,1 @@
-export const SET_USERS = 'TEMPLATE/SET_USERS'
-export const ADD_USER = 'TEMPLATE/SET_USER'
+export const SET_SUBSCRIPTION_FLAG = 'cartExtensionSubscription/SET_SUBSCRIPTION_FLAG'
