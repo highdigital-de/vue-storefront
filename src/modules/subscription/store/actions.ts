@@ -23,10 +23,11 @@ const actions: ActionTree<Subscription, RootState> = {
       Logger.debug('got task meta' + task)()
       const productQuery = new SearchQuery()
       productQuery.applyFilter({key: 'id', value: {'eq': task.result.products}})
-      context.dispatch('product/list', { query: productQuery , updateState: true}, { root: true })
-      .then(() => {
-        return task
-      })
+      return context.dispatch('product/list', { query: productQuery , updateState: true}, { root: true })
+        .then(() => {
+          context.commit('cart/cartExtensionSubscription/SET_SUBSCRIPTION_FLAG', true, {root: true})
+          return task
+        })
     })
   },
   postCartDelivery (context, body) {
