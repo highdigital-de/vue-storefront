@@ -8,6 +8,7 @@ import Subscription from '../types/SubscriptionState'
 import { Logger } from '@vue-storefront/core/lib/logger'
 import { TaskQueue } from '@vue-storefront/core/lib/sync'
 import Task from '@vue-storefront/core/lib/sync/types/Task'
+import SearchQuery from '@vue-storefront/core/lib/search/searchQuery';
 
 const actions: ActionTree<Subscription, RootState> = {
   getMeta (context) {
@@ -20,10 +21,12 @@ const actions: ActionTree<Subscription, RootState> = {
       },
     }).then((task: Task) => {
       Logger.debug('got task meta' + task)()
-      context.commit(types.SUBSCRIPTION_PRODUCTS_ADD, {products: task.result.products})
-      context.commit(types.SUBSCRIPTION_COUPONS_ADD, {coupons: task.result.coupons})
-      context.commit(types.SUBSCRIPTION_DELIVERY_CYCLES_ADD, {deliveryCycles: task.result.delivery_cycles})
-      return task
+      const productQuery = new SearchQuery()
+      productQuery.applyFilter({key: 'id', value: {'eq': task.result.products}})
+      context.dispatch('product/list', { query: productQuery , updateState: true}, { root: true })
+      .then(() => {
+        return task
+      })
     })
   },
   postCartDelivery (context, body) {
