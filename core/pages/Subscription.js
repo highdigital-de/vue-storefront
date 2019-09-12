@@ -10,7 +10,7 @@ export default {
   props: {
     activeBlock: {
       type: String,
-      default: 'SubscriptionOverview'
+      default: 'Overview'
     }
   },
   async asyncData ({ store, routlo, context }) { // this is for SSR purposes to prefetch data
@@ -30,6 +30,10 @@ export default {
       'changeDelivery',
       'cancelSubscription'
     ]
+  },
+  beforeMount () {
+    this.clickPostGetSubscription()
+    this.clickGetMeta()
   },
   computed: {
     subscription () {

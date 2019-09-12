@@ -40,6 +40,7 @@ let routes = [
   { name: 'compare', path: '/compare', component: Compare, props: {title: 'Compare Products'} },
   { name: 'page-not-found', path: '/page-not-found', component: PageNotFound },
   { name: 'subscription', path: '/subscription', component: Subscription },
+  { name: 'subscription', path: '/subscription/products', component: Subscription, props: { activeBlock: 'Products' } },
   { name: 'error', path: '/error', component: ErrorPage, meta: { layout: 'minimal' } },
   { name: 'custom-cms-page', path: '/custom-cms-page', component: CustomCmsPage },
   { name: 'cms-block-demo-page-ssr', path: '/cms-block-demo-page-ssr', component: CmsBlockDemoPageSsr },

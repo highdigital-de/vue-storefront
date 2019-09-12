@@ -55,7 +55,8 @@
 <script>
 import NoSSR from 'vue-no-ssr'
 import Subscription from '../../../../core/pages/Subscription'
-import SubscriptionOverview from '../../../modules/subscription/components/Overview'
+import Overview from '../../../modules/subscription/components/Overview'
+import Products from '../../../modules/subscription/components/Products'
 
 export default {
   name: 'Subscription',
@@ -66,7 +67,8 @@ export default {
   },
   components: {
     'no-ssr': NoSSR,
-    SubscriptionOverview
+    Overview,
+    Products
   },
   methods: {
     toggleSearchpanel () {
