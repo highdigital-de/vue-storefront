@@ -7,6 +7,12 @@ import { Logger } from '@vue-storefront/core/lib/logger'
 export default {
   name: 'Subscription',
   mixins: [Composite],
+  props: {
+    activeBlock: {
+      type: String,
+      default: 'SubscriptionOverview'
+    }
+  },
   async asyncData ({ store, routlo, context }) { // this is for SSR purposes to prefetch data
     Logger.log('Entering asyncData for Subscription ' + new Date())()
     if (context) context.output.cacheTags.add(`subscription`)
@@ -35,9 +41,9 @@ export default {
     }
   },
   methods: {
-    clickGetSubscription () {
-      console.log('click get sub')
-      return this.$store.dispatch('subscription/getSubscription')
+    clickPostGetSubscription () {
+      console.log('click post get sub')
+      return this.$store.dispatch('subscription/postGetSubscription')
     },
     clickGetMeta () {
       console.log('click get meta')

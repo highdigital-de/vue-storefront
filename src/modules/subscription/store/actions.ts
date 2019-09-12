@@ -60,13 +60,14 @@ const actions: ActionTree<Subscription, RootState> = {
       return task
     })
   },
-  getSubscription (context) {
-    console.log('action API7 get subscription')
+  postGetSubscription (context, body) {
+    console.log('action API7 post get subscription')
     return TaskQueue.execute({ url: config.subscription.get_endpoint,
       payload: {
-        method: 'GET',
+        method: 'Post',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
+        body: JSON.stringify(body)
       },
     }).then((task: Task) => {
       Logger.debug('got task ' + task)()

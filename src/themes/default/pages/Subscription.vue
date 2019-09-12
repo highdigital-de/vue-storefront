@@ -27,7 +27,7 @@
             <button @click="clickPostPaymentmethodUpdate">Post Paymentmethod Update</button>
           </div>
           <div class="row center-xs">
-            <button @click="clickGetSubscription">Get Subscription</button>
+            <button @click="clickPostGetSubscription">Post Get Subscription</button>
           </div>
           <div class="row center-xs">
             <button @click="clickPostDelete">Post Delete</button>
@@ -42,11 +42,10 @@
             <button @click="clickSetSubscriptionFlag">Set Subscription Flag</button>
           </div>
         </section>
-        <section class="container" v-if="hasSubscription">
-          <h2>Subscription loaded:</h2>
-          <div class="subscription">
-            {{ subscription }}
-          </div>
+        <section>
+          <no-ssr>
+            <component :is="this.$props.activeBlock" />
+          </no-ssr>
         </section>
       </div>
     </section>
@@ -54,7 +53,9 @@
 </template>
 
 <script>
+import NoSSR from 'vue-no-ssr'
 import Subscription from '../../../../core/pages/Subscription'
+import SubscriptionOverview from '../../../modules/subscription/components/Overview'
 
 export default {
   name: 'Subscription',
@@ -64,6 +65,8 @@ export default {
     }
   },
   components: {
+    'no-ssr': NoSSR,
+    SubscriptionOverview
   },
   methods: {
     toggleSearchpanel () {
