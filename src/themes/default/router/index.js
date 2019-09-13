@@ -39,12 +39,13 @@ let routes = [
   { name: 'contact', path: '/contact', component: Static, props: {page: 'contact', title: 'Contact'} },
   { name: 'compare', path: '/compare', component: Compare, props: {title: 'Compare Products'} },
   { name: 'page-not-found', path: '/page-not-found', component: PageNotFound },
-  { name: 'subscription', path: '/subscription', component: Subscription },
-  { name: 'subscription', path: '/subscription/products', component: Subscription, props: { activeBlock: 'Products' } },
   { name: 'error', path: '/error', component: ErrorPage, meta: { layout: 'minimal' } },
   { name: 'custom-cms-page', path: '/custom-cms-page', component: CustomCmsPage },
   { name: 'cms-block-demo-page-ssr', path: '/cms-block-demo-page-ssr', component: CmsBlockDemoPageSsr },
-  { name: 'cms-page-sync', path: '/cms-page-sync', component: CmsData, props: {identifier: 'about-us', type: 'Page', sync: true} }
+  { name: 'cms-page-sync', path: '/cms-page-sync', component: CmsData, props: {identifier: 'about-us', type: 'Page', sync: true} },
+  { name: 'subscription', path: '/subscription', component: Subscription },
+  { name: 'subscription-products', path: '/subscription/products', component: Subscription, props: { activeBlock: 'Products' } },
+  { name: 'my-subscription', path: '/subscription/my-subscription', component: Subscription, props: { activeBlock: 'MySubscription' } }
 ]
 if (!config.products.useShortCatalogUrls) {
   routes = routes.concat([
