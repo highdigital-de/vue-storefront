@@ -30,6 +30,7 @@ import Checkout from '../../../modules/subscription/components/Checkout'
 import MyAddress from '../../../modules/subscription/components/MyAddress'
 import MyPaymentMethod from '../../../modules/subscription/components/MyPaymentMethod'
 import Confirmation from '../../../modules/subscription/components/Confirmation'
+import MyProducts from '../../../modules/subscription/components/MyProducts'
 
 export default {
   name: 'Subscription',
@@ -49,7 +50,8 @@ export default {
     Checkout,
     MyAddress,
     MyPaymentMethod,
-    Confirmation
+    Confirmation,
+    MyProducts
   },
   methods: {
     toggleSearchpanel () {
