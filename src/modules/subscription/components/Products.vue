@@ -22,7 +22,7 @@
       Gesamtsumme inkl. USt.<br>
       Nur noch 10,04€ und wir schenken dir einen Rabatt.
     </div>
-    <router-link to="/subscription/delivery-cycle" class="button">{{ $t('Save') }} / {{ $t('Choose Delivery Cycle') }}</router-link>
+    <router-link to="/subscription/delivery-cycle" class="button">{{ $t('Choose Delivery Cycle') }}</router-link>
   </div>
 </template>
 

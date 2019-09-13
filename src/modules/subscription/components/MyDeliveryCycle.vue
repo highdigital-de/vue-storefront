@@ -10,9 +10,9 @@
       </option>
     </select>
     <p>Wenn Sie den Lieferzyklus sofort ändern, wird eine Bestellung ausgelöst.</p>
-    <a class="button">{{ $t('Safe and deliver now') }}</a>
+    <router-link to="my-delivery" class="button">{{ $t('Safe and deliver now') }}</router-link>
     <p>Der Lieferzyklus wird nach der nächsten Bestellung <b>19.9.19</b> automatisch angepasst.</p>
-    <a class="button">{{ $t('Save') }}</a>
+    <router-link to="my-delivery" class="button">{{ $t('Save') }}</router-link>
     <p>Wenn Abo-Bestellung ausgelöst, dann gibt es 3 Varianten...</p>
     <a class="button" @click="$router.go(-1)">{{ $t('Back') }}</a>
   </div>

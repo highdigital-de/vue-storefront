@@ -10,7 +10,7 @@
         {{ dv.name }}
       </option>
     </select>
-    <a class="button">{{ $t('Into Cart') }}</a>
+    <router-link to="checkout" class="button">{{ $t('Into Cart') }}</router-link>
     <a class="button" @click="$router.go(-1)">{{ $t('Back') }}</a>
   </div>
 </template>

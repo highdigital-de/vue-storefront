@@ -7,16 +7,17 @@
       Musterstrasse 1<br>
       12345 Musterstadt<br>
       <br>
-      <a>ändern</a><br>
+      <router-link to="/subscription/my-address">ändern</router-link><br>
       <br>
       aktueller Lieferzyklus: alle 4 Wochen<br>
-      <a>ändern</a><br>
+      <br>
+      <router-link to="/subscription/my-delivery-cycle">ändern</router-link><br>
       <br>
       Nächste Lieferung: 12.09.19
     </div>
-    <a class="button">{{ $t('Defer Delivery') }}</a>
-    <a class="button">{{ $t('Deliver now') }}</a>
-    <a class="button" @click="$router.go(-1)">{{ $t('Back') }}</a>
+    <router-link to="my-delivery" class="button">{{ $t('Defer Delivery') }}</router-link>
+    <router-link to="my-delivery" class="button">{{ $t('Deliver now') }}</router-link>
+    <router-link to="my-subscription" class="button">{{ $t('Back to my Subscription') }}</router-link>
   </div>
 </template>
 

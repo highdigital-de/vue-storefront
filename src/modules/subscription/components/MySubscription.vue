@@ -4,7 +4,7 @@
     <div class="placeholder">
       Cart
     </div>
-    <router-link to="/subscription" class="button">{{ $t('add another cacao') }}</router-link>
+    <router-link to="my-products" class="button">{{ $t('add another cacao') }}</router-link>
     <div class="placeholder">
       Abo Vorteilsrabatt <br>
       Gesamtsumme inkl. USt. <br>
@@ -14,8 +14,8 @@
     <div class="placeholder">
       Cart
     </div>
-    <router-link to="/subscription" class="button">{{ $t('Change Payment Method') }}</router-link>
-    <router-link to="/subscription" class="button">{{ $t('Change Delivery Cycle') }}</router-link>
+    <router-link to="my-payment-method" class="button">{{ $t('Change Payment Method') }}</router-link>
+    <router-link to="my-delivery" class="button">{{ $t('Change Delivery') }}</router-link>
     <div>
       Das Abo lässt sich jederzeit <router-link to="/subscription">kündigen</router-link>.
     </div>

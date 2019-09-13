@@ -8,7 +8,7 @@
     <div class="placeholder">
       Lieferungsadresse
     </div>
-    <a class="button">{{ $t('Weiter') }}</a>
+    <router-link to="my-delivery" class="button">{{ $t('Save') }}</router-link>
   </div>
 </template>
 

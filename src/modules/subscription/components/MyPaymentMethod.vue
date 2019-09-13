@@ -4,7 +4,7 @@
     <div class="placeholder">
       Payment Method
     </div>
-    <a class="button">{{ $t('Weiter') }}</a>
+    <router-link to="my-subscription" class="button">{{ $t('Save') }}</router-link>
   </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>{{ $t('Invoice address') }}</h2>
+    <h2>{{ $t('Checkout') }}</h2>
     <div class="placeholder">
       Address Form
     </div>
@@ -15,7 +15,7 @@
         {{ dv.name }}
       </option>
     </select>
-    <a class="button">{{ $t('Buy now') }}</a>
+    <router-link to="confirmation" class="button">{{ $t('Buy now') }}</router-link>
   </div>
 </template>
 
