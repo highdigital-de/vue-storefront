@@ -22,6 +22,7 @@ import NoSSR from 'vue-no-ssr'
 import Subscription from '../../../../core/pages/Subscription'
 import Overview from '../../../modules/subscription/components/Overview'
 import Products from '../../../modules/subscription/components/Products'
+import MySubscription from '../../../modules/subscription/components/MySubscription'
 
 export default {
   name: 'Subscription',
@@ -33,7 +34,8 @@ export default {
   components: {
     'no-ssr': NoSSR,
     Overview,
-    Products
+    Products,
+    MySubscription
   },
   methods: {
     toggleSearchpanel () {
@@ -44,8 +46,18 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 a {
   text-decoration: underline;
+}
+.button {
+  padding: 10px 30px;
+  background-color: grey;
+  display: block;
+  margin: 20px;
+}
+.placeholder {
+  padding: 100px;
+  background-color: #eee;
 }
 </style>

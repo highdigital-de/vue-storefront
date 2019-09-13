@@ -5,11 +5,11 @@
     <p>Jederzeit kündbar</p>
     <p>...weitere Vorteilsangebote</p>
     <router-link to="/subscription/products" class="button">{{ $t("Order Cacao Subscription") }}</router-link>
-    <router-link to="/subscription/products" class="button">{{ $t("My Cacao Subscription") }}</router-link>
-    <div class="paket">
+    <router-link to="/subscription/my-subscription" class="button">{{ $t("My Cacao Subscription") }}</router-link>
+    <div class="placeholder">
       Paket 1
     </div>
-    <div class="paket">
+    <div class="placeholder">
       Paket 2
     </div>
   </div>
@@ -27,16 +27,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.paket {
-  padding: 100px;
-  background-color: #eee;
-}
-.button {
-  padding: 10px 30px;
-  background-color: grey;
-  display: block;
-  margin: 20px;
-}
-</style>
