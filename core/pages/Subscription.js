@@ -31,10 +31,6 @@ export default {
       'cancelSubscription'
     ]
   },
-  beforeMount () {
-    this.clickPostGetSubscription()
-    this.clickGetMeta()
-  },
   computed: {
     subscription () {
       return this.$store.state.subscription.subscription
