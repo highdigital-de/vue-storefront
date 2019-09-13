@@ -21,6 +21,7 @@ const actions: ActionTree<Subscription, RootState> = {
       },
     }).then((task: Task) => {
       Logger.debug('got task meta' + task)()
+      context.commit('subscription/DELIVERY_CYCLES_ADD', {deliveryCycles: task.result.delivery_cycles})
       const productQuery = new SearchQuery()
       productQuery.applyFilter({key: 'id', value: {'eq': task.result.products}})
       return context.dispatch('product/list', { query: productQuery , updateState: true}, { root: true })
