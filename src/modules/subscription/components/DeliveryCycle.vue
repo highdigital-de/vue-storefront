@@ -18,7 +18,7 @@
 <script>
 
 export default {
-  name: 'MyDeliveryCycle',
+  name: 'DeliveryCycle',
   computed: {
     deliveryCycles () {
       return this.$store.state.subscription.deliveryCycles
