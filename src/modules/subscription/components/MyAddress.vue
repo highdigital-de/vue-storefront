@@ -15,7 +15,7 @@
 <script>
 
 export default {
-  name: 'MyDeliveryCycle',
+  name: 'MyAddress',
   computed: {
   },
   methods: {

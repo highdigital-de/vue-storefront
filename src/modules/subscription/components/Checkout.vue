@@ -22,7 +22,7 @@
 <script>
 
 export default {
-  name: 'MyDeliveryCycle',
+  name: 'Checkout',
   computed: {
     deliveryCycles () {
       return this.$store.state.subscription.deliveryCycles
