@@ -7,41 +7,6 @@
     </section>
     <section class="bg-cl-primary py35 px20">
       <div class="container">
-        <div class="lh16 h5 weight-400">
-          <p>{{ $t("Subscription page.") }}</p>
-        </div>
-        <section class="container">
-          <header class="col-md-12 pt40">
-            <h3 class="align-center">{{ $t('See our api calls') }}</h3>
-          </header>
-          <div class="row center-xs">
-            <div v-for="call in apiCalls" :key="call" class="col-md-3">{{ call }}</div>
-          </div>
-          <div class="row center-xs">
-            <button @click="clickGetMeta">Get Meta</button>
-          </div>
-          <div class="row center-xs">
-            <button @click="clickPostCartDelivery">Post Cart Delivery</button>
-          </div>
-          <div class="row center-xs">
-            <button @click="clickPostPaymentmethodUpdate">Post Paymentmethod Update</button>
-          </div>
-          <div class="row center-xs">
-            <button @click="clickPostGetSubscription">Post Get Subscription</button>
-          </div>
-          <div class="row center-xs">
-            <button @click="clickPostDelete">Post Delete</button>
-          </div>
-          <div class="row center-xs">
-            <button @click="clickPostDelivery">Post  Delivery</button>
-          </div>
-          <div class="row center-xs">
-            <button @click="clickPostUpdate">Post Update</button>
-          </div>
-          <div class="row center-xs">
-            <button @click="clickSetSubscriptionFlag">Set Subscription Flag</button>
-          </div>
-        </section>
         <section>
           <no-ssr>
             <component :is="this.$props.activeBlock" />
