@@ -52,6 +52,7 @@ let routes = [
   { name: 'subscription-my-address', path: '/subscription/my-address', component: Subscription, props: { activeBlock: 'MyAddress' } },
   { name: 'subscription-my-address', path: '/subscription/my-address', component: Subscription, props: { activeBlock: 'MyAddress' } },
   { name: 'subscription-my-payment-method', path: '/subscription/my-payment-method', component: Subscription, props: { activeBlock: 'MyPaymentMethod' } },
+  { name: 'subscription-confirmation', path: '/subscription/confirmation', component: Subscription, props: { activeBlock: 'Confirmation' } },
   { name: 'my-subscription', path: '/subscription/my-subscription', component: Subscription, props: { activeBlock: 'MySubscription' } }
 ]
 if (!config.products.useShortCatalogUrls) {
