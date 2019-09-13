@@ -45,6 +45,7 @@ let routes = [
   { name: 'cms-page-sync', path: '/cms-page-sync', component: CmsData, props: {identifier: 'about-us', type: 'Page', sync: true} },
   { name: 'subscription', path: '/subscription', component: Subscription },
   { name: 'subscription-products', path: '/subscription/products', component: Subscription, props: { activeBlock: 'Products' } },
+  { name: 'subscription-delivery-cycle', path: '/subscription/deliveryCycle', component: Subscription, props: { activeBlock: 'MyDeliveryCycle' } },
   { name: 'my-subscription', path: '/subscription/my-subscription', component: Subscription, props: { activeBlock: 'MySubscription' } }
 ]
 if (!config.products.useShortCatalogUrls) {

@@ -23,6 +23,7 @@ import Subscription from '../../../../core/pages/Subscription'
 import Overview from '../../../modules/subscription/components/Overview'
 import Products from '../../../modules/subscription/components/Products'
 import MySubscription from '../../../modules/subscription/components/MySubscription'
+import MyDeliveryCycle from '../../../modules/subscription/components/MyDeliveryCycle'
 
 export default {
   name: 'Subscription',
@@ -35,7 +36,8 @@ export default {
     'no-ssr': NoSSR,
     Overview,
     Products,
-    MySubscription
+    MySubscription,
+    MyDeliveryCycle
   },
   methods: {
     toggleSearchpanel () {
