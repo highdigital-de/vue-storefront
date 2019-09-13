@@ -47,6 +47,7 @@ let routes = [
   { name: 'subscription-products', path: '/subscription/products', component: Subscription, props: { activeBlock: 'Products' } },
   { name: 'subscription-delivery-cycle', path: '/subscription/delivery-cycle', component: Subscription, props: { activeBlock: 'DeliveryCycle' } },
   { name: 'subscription-my-delivery', path: '/subscription/my-delivery', component: Subscription, props: { activeBlock: 'MyDelivery' } },
+  { name: 'subscription-my-delivery-cycle', path: '/subscription/my-delivery-cycle', component: Subscription, props: { activeBlock: 'MyDeliveryCycle' } },
   { name: 'my-subscription', path: '/subscription/my-subscription', component: Subscription, props: { activeBlock: 'MySubscription' } }
 ]
 if (!config.products.useShortCatalogUrls) {

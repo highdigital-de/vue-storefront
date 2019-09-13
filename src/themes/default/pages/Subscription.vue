@@ -25,6 +25,7 @@ import Products from '../../../modules/subscription/components/Products'
 import MySubscription from '../../../modules/subscription/components/MySubscription'
 import DeliveryCycle from '../../../modules/subscription/components/DeliveryCycle'
 import MyDelivery from '../../../modules/subscription/components/MyDelivery'
+import MyDeliveryCycle from '../../../modules/subscription/components/MyDeliveryCycle'
 
 export default {
   name: 'Subscription',
@@ -39,7 +40,8 @@ export default {
     Products,
     MySubscription,
     DeliveryCycle,
-    MyDelivery
+    MyDelivery,
+    MyDeliveryCycle
   },
   methods: {
     toggleSearchpanel () {
