@@ -28,6 +28,7 @@ import MyDelivery from '../../../modules/subscription/components/MyDelivery'
 import MyDeliveryCycle from '../../../modules/subscription/components/MyDeliveryCycle'
 import Checkout from '../../../modules/subscription/components/Checkout'
 import MyAddress from '../../../modules/subscription/components/MyAddress'
+import MyPaymentMethod from '../../../modules/subscription/components/MyPaymentMethod'
 
 export default {
   name: 'Subscription',
@@ -45,7 +46,8 @@ export default {
     MyDelivery,
     MyDeliveryCycle,
     Checkout,
-    MyAddress
+    MyAddress,
+    MyPaymentMethod
   },
   methods: {
     toggleSearchpanel () {
