@@ -52,9 +52,12 @@ a {
 }
 .button {
   padding: 10px 30px;
-  background-color: grey;
+  background-color: #ccc;
   display: block;
   margin: 20px;
+}
+.button:hover {
+  background-color: #bbb
 }
 .placeholder {
   padding: 100px;
