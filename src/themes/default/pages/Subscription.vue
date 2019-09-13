@@ -23,7 +23,8 @@ import Subscription from '../../../../core/pages/Subscription'
 import Overview from '../../../modules/subscription/components/Overview'
 import Products from '../../../modules/subscription/components/Products'
 import MySubscription from '../../../modules/subscription/components/MySubscription'
-import MyDeliveryCycle from '../../../modules/subscription/components/MyDeliveryCycle'
+import DeliveryCycle from '../../../modules/subscription/components/DeliveryCycle'
+import MyDelivery from '../../../modules/subscription/components/MyDelivery'
 
 export default {
   name: 'Subscription',
@@ -37,7 +38,8 @@ export default {
     Overview,
     Products,
     MySubscription,
-    MyDeliveryCycle
+    DeliveryCycle,
+    MyDelivery
   },
   methods: {
     toggleSearchpanel () {
