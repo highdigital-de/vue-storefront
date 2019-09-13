@@ -1,7 +1,28 @@
 <template>
   <div>
     <h2>Products</h2>
-    <product-listing :products="products" />
+    <a id="products" />
+    <product-listing :products="products" columns="2" />
+    <div class="placeholder">
+      pur bio. purer genuss.<br>
+      schmeckt super<br>
+      enthält koffein<br>
+      lowcarb<br>
+      Plus Minus
+    </div>
+    <a class="button">{{ $t('Add to subscription') }}</a>
+    <div class="placeholder">
+      Deine Auswahl<br>
+      Kakao 1<br>
+      Kakao 2<br>
+    </div>
+    <a class="button" href="#products">{{ $t('+ Add another cacao') }}</a>
+    <div class="placeholder">
+      Abo Vorteilsrabatt: <br>
+      Gesamtsumme inkl. USt.<br>
+      Nur noch 10,04€ und wir schenken dir einen Rabatt.
+    </div>
+    <a class="button">{{ $t('Save') }}</a>
   </div>
 </template>
 
