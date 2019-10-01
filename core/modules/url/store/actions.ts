@@ -5,15 +5,16 @@ import * as types from './mutation-types'
 import { cacheStorage } from '../'
 import queryString from 'query-string'
 import SearchQuery from '@vue-storefront/core/lib/search/searchQuery'
-import { processDynamicRoute, normalizeUrlPath, parametrizeRouteData } from '../helpers'
+import { processMultipleDynamicRoutes, normalizeUrlPath, parametrizeRouteData } from '../helpers'
 import { storeCodeFromRoute, removeStoreCodeFromRoute } from '@vue-storefront/core/lib/multistore'
+import config from 'config'
 
 // it's a good practice for all actions to return Promises with effect of their execution
 export const actions: ActionTree<UrlState, any> = {
   // if you want to use cache in your module you can load cached data like this
   async registerMapping ({ commit }, { url, routeData }: { url: string, routeData: any}) {
     commit(types.REGISTER_MAPPING, { url, routeData })
-    await cacheStorage.setItem(url, routeData)
+    await cacheStorage.setItem(normalizeUrlPath(url), routeData)
     return routeData
   },
   /**
@@ -21,10 +22,12 @@ export const actions: ActionTree<UrlState, any> = {
    */
   async registerDynamicRoutes ({ state, dispatch }) {
     if (state.dispatcherMap) {
+      processMultipleDynamicRoutes(state.dispatcherMap) // check if we're to add routes to vue router
+      const registrationQueue = []
       for (const [url, routeData] of Object.entries(state.dispatcherMap)) {
-        processDynamicRoute (routeData, url)
-        dispatch('registerMapping', { url, routeData })
+        registrationQueue.push(dispatch('registerMapping', { url, routeData }))
       }
+      Promise.all(registrationQueue)
     }
   },
   mapUrl ({ state, dispatch }, { url, query }: { url: string, query: string}) {
@@ -32,9 +35,9 @@ export const actions: ActionTree<UrlState, any> = {
     const storeCodeInPath = storeCodeFromRoute(url)
     url = normalizeUrlPath(url)
 
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       if (state.dispatcherMap[url]) {
-        return resolve (parametrizeRouteData(state.dispatcherMap[url], query, storeCodeInPath))
+        return resolve(parametrizeRouteData(state.dispatcherMap[url], query, storeCodeInPath))
       }
       cacheStorage.getItem(url).then(routeData => {
         if (routeData !== null) {
@@ -48,7 +51,7 @@ export const actions: ActionTree<UrlState, any> = {
       }).catch(reject)
     })
   },
-  
+
   /**
    * Router mapping fallback - get the proper URL from API
    * This method could be overriden in custom module to provide custom URL mapping logic

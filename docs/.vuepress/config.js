@@ -1,5 +1,11 @@
 module.exports = {
   base: '/',
+  port: 8081,
+  markdown: {
+    toc: {
+      includeLevel: [2]
+    }
+  },
   head: [['link', { rel: 'icon', href: '/favicon.png' }]],
   themeConfig: {
     repo: 'DivanteLtd/vue-storefront',
@@ -20,12 +26,31 @@ module.exports = {
       '/guide/': [
       	{
           title : 'General Information',
-          collapsible: false,
+          collapsable: false,
           children: [
             'general/introduction'
           ]
 	      },
         'upgrade-notes/',
+        {
+          title: 'Cookbook',
+          collapsable: false,
+          children: [
+            'cookbook/data-import',
+            'cookbook/elastic',
+            'cookbook/setup',
+            'cookbook/integration',
+            'cookbook/module',
+            'cookbook/theme',
+            'cookbook/common-pitfall',
+            'cookbook/devops',
+            'cookbook/tdd',
+            'cookbook/internals',
+            'cookbook/vue',
+            'cookbook/multistores',
+            'cookbook/migration'
+          ],
+        },
         {
           title: 'Installation',
           collapsable: false,
@@ -101,6 +126,7 @@ module.exports = {
             'extensions/introduction',
             'extensions/extending-api',
             'extensions/extending-server-side-routes',
+            'extensions/extensions-to-modify-results'
           ],
         },
         {
@@ -140,7 +166,6 @@ module.exports = {
             'integrations/tier-prices-sync',
             'integrations/totals-sync',
             'integrations/multistore',
-            'integrations/product-reviews',
           ],
         },
       ],

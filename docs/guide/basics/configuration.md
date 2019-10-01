@@ -1,6 +1,6 @@
 # Configuration file explained
 
-VThe Vue Storefront application uses the [node-config](https://github.com/lorenwest/node-config) npm module to manage configuration files. Configuration is stored in the `/config` directory within two JSON files:
+The Vue Storefront application uses the [node-config](https://github.com/lorenwest/node-config) npm module to manage configuration files. Configuration is stored in the `/config` directory within two JSON files:
 
 - `default.json` is a configuration file provided along with the core Vue Storefront code and updated with any new release of Vue Storefront. It contains the default values only and therefore it shouldn't be modified within your specific Vue Storefront instance.
 
@@ -66,11 +66,11 @@ This is an optional GraphQL endpoint. We're now supporting graphQL for the [cata
 },
 ```
 
-Vue Storefront uses the Elasticsearch Query Language to query for data. However, here you're putting the Vue Storefront API `/api/catalog`  endpoint, which is a kind of Elasticsearch Proxy (dealing with the taxes, security itd.).
+Vue Storefront uses the Elasticsearch Query Language to query for data. However, here you're putting the Vue Storefront API `/api/catalog`  endpoint, which is a kind of Elasticsearch Proxy (dealing with the taxes, security etc.).
 
 If your `vue-storefront-api` instance is running on the `localhost`, port `8080` then the correct elasticsearch endpoint is as presented here.
 
-Starting from Vue Storefront v1.6, user may set the: `config.elasticsearch.queryMethod` o either "POST" (default) / "GET". When "GET" is set, the Elasticsearch Query object is passed to vue-storefront-api as a request parameter named "request". By doing so, Service Worker will now be able to cache the results from Elasticsearch. Service Workers cannot cache any POST requests currently.
+Starting from Vue Storefront v1.6, user may set `config.elasticsearch.queryMethod` either *POST* (default) or *GET*. When *GET* is set, the Elasticsearch Query object is passed to vue-storefront-api as a request parameter named *request*. By doing so, Service Worker will now be able to cache the results from Elasticsearch. Service Workers cannot cache any POST requests currently.
 
 :::tip Notice
 Service Worker is not caching the /api requests on development envs. (localhost) as the vue-storefront-api by default runs on a different port (8080).
@@ -147,6 +147,13 @@ This is the store name as displayed in the `Language/Switcher.vue`.
 ```
 
 This URL is used only in the `Switcher` component. Typically it equals just to `/<store_code>`. Sometimes you may like to have different store views running as separate Vue Storefront instances, even under different URL addresses. This is the situation when this property comes into action. Just take a look at how [Language/Switcher.vue](https://github.com/DivanteLtd/vue-storefront/blob/master/src/themes/default/components/core/blocks/Switcher/Language.vue) generates the list of the stores.
+It accepts not only path, but also domains as well.
+
+```json
+    "appendStoreCode": true,
+```
+
+By default store codes are appended at the end of every url. If you want to use domain only as store url, you can set it to `false`.
 
 ```json
     "elasticsearch": {
@@ -331,13 +338,6 @@ These endpoints should point to the `vue-storefront-api` instance and typically,
 ## Products
 
 ```json
-"products": {
-  "useShortCatalogUrls": false,
-```
-
-When this option is set to `true`, Vue Storefront will use the alternative routing for products and categories without the `/p/` and `/c/` prefixes.  It may be useful for search-engine optimization purposes.
-
-```json
   "useMagentoUrlKeys": false,
 ```
 
@@ -394,11 +394,6 @@ This is related to `alwaysSyncPlatformPricesOver` and when it's set to true, the
 
 This is related to `alwaysSyncPlatformPricesOver`. When true, Vue Storefront will wait for dynamic prices before rendering the page. Otherwise, the product and category pages will be rendered using the default (Elasticsearch-based) prices and then asynchronously override them with current ones.
 
-```json
-  "setupVariantByAttributeCode": true,
-```
-
-This is a deprecated value. When set to false, Vue Storefront will use `slugify(attribute.name)` instead of `attribute.attribute_code` to construct filter and product configurators. It was provided to maintain the backward compatibility with some platforms that didn't provide the attribute_code property. Currently not used.
 
 ```json
   "endpoint": "http://localhost:8080/api/product",

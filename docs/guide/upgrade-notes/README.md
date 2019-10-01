@@ -2,6 +2,23 @@
 
 We're trying to keep the upgrade process as easy as possible. Unfortunately, sometimes manual code changes are required. Before pulling out the latest version, please take a look at the upgrade notes below:
 
+## 1.9 -> 1.10
+- Event `application-after-init` is now emitted by event bus instead of root Vue instance (app), so you need to listen to `Vue.prototype.$bus` (`Vue.prototype.$bus.$on()`) now
+- The lowest supported node version  is currently 8.10.0,
+- Module Mailchimp is removed in favor of Newsletter. `local.json` configuration under key `mailchimp` moved to key `newsletter`.
+- In multistore mode now there is a possibility to skip appending storecode to url with `appendStoreCode` config option. To keep the original behavior, it should be set to true. - @lukeromanowicz (#3048).
+- The `cart/addItem` is no longer displaying the error messages - please use the `diffLog.clientNorifications` to update the UI instead (take a look at the `AddToCart.ts` for a reference)
+- Please make sure your `AddToCart.vue` component has the `notifyUser` method defined for showing the errors / success messages while adding to the cart. The default implementation is:
+
+```js
+    notifyUser (notificationData) {
+      this.$store.dispatch('notification/spawnNotification', notificationData, { root: true })
+    }
+```
+- The getter `cart/totals` has been replaced with `cart/getTotals` - @pkarw (#2522)
+- The getter `cart/coupon` has been replaced with `cart/getCoupon` - @pkarw (#2522)
+- The getter `cart/totalQuantity` has been replaced with `cart/getItemsTotalQuantity` - @pkarw (#2522)
+
 ## 1.8 -> 1.9
 - The Url Dispatcher feature added for friendly URLs. When `config.seo.useUrlDispatcher` set to true the `product.url_path` and `category.url_path` fields are used as absolute URL addresses (no `/c` and `/p` prefixes anymore). Check the latest `mage2vuestorefront` snapshot and **reimport Your products** to properly set `url_path` fields 
 - `cart.multisiteCommonCart` config property changed to `storeViews.commonCache`
@@ -158,7 +175,6 @@ Required action: Change the import path. In case of additional changes click on 
 - [`Wishlist/Product.vue`](https://github.com/DivanteLtd/vue-storefront/commit/cc17b5bfa43a9510815aea14dce8bafac382bc7f#diff-7c0514d730223832fd2e1fae9d5f2068)
 - [`Wishlist.vue`](https://github.com/DivanteLtd/vue-storefront/commit/cc17b5bfa43a9510815aea14dce8bafac382bc7f#diff-8dc4f61d36ae2b2ffc2a4c4603e844b8)
 - [`Collection.vue`](https://github.com/DivanteLtd/vue-storefront/commit/cc17b5bfa43a9510815aea14dce8bafac382bc7f#diff-26a650b112a3b01efd1ff3a5c752aba1)
-- [`CustomCmsPage.vue`](https://github.com/DivanteLtd/vue-storefront/commit/cc17b5bfa43a9510815aea14dce8bafac382bc7f#diff-8e52fc16e52baec382994cc11445d222) (extension)
 - [`Home.vue`](https://github.com/DivanteLtd/vue-storefront/commit/cc17b5bfa43a9510815aea14dce8bafac382bc7f#diff-91bc0c9fe9fa95dd88900beff8975200)
 
 #### Components that were moved from core to theme
@@ -218,7 +234,7 @@ We fixed SSR memory leaks with #1882. It should not affect your custom code, but
 
 #### GraphQL
 
-We added GraphQL support. Please read more on the [GraphQL Action Plan](https://github.com/DivanteLtd/vue-storefront/blob/develop/doc/GraphQL%20Action%20Plan.md). Starting from this release, the **bodybuilder** package is **deprecated**. You should use the **SearchQuery** internal class that can be used against API and GraphQL endpoints. Read more on [how to query data](https://github.com/DivanteLtd/vue-storefront/blob/develop/doc/data/ElasticSearch%20Queries.md).
+We added GraphQL support. Please read more on the [GraphQL Action Plan](/guide/basics/graphql.html). Starting from this release, the **bodybuilder** package is **deprecated**. You should use the **SearchQuery** internal class that can be used against API and GraphQL endpoints. Read more on [how to query data](/guide/data/elastic-queries.html).
 
 #### SSR: Advanced output and cache
 
@@ -272,11 +288,11 @@ We added Reviews support, however, Magento 2 is still lacking Reviews support in
 
 ### Upgrade step-by-step
 
-#### `global.$VS` replaced with `rootStore` and `config` was moved to `rootStore.state.config`
+#### `global.$VS` replaced with `rootStore` and `config` was moved to `config`
 
 To get access to rootStore, import it by
 
-`import rootStore from '@vue-storefront/core/store'`
+`import config from 'config'`
 
 #### cms extenstion was renamed to extension-magento2-cms
 
