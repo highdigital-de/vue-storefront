@@ -71,7 +71,7 @@ export const registerModules: VueStorefrontModule[] = [
   // GoogleAnalytics,
   // Hotjar,
   PaymentBackendMethods,
-  PaymentCashOnDelivery,
+  //PaymentCashOnDelivery,
   PaymentPayone,
   RawOutputExample,
   AmpRenderer,
