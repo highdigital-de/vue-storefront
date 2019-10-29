@@ -250,6 +250,7 @@ export const Payment = {
           'checkout-order-review-additional-container'
         ).innerHTML = '<div id="checkout-order-review-additional">&nbsp;</div>'; // reset
       }
+
       let payoneContainers = document.getElementsByName(
         'payone-test-container'
       );
@@ -257,6 +258,7 @@ export const Payment = {
         //delete innerHtml block of  all occurence's of "payone-test-container"
         payoneContainers[i].innerHTML = ''; // reset
       }
+
       // Let anyone listening know that we've changed payment method, usually a payment extension.
       this.$bus.$emit(
         'checkout-payment-method-changed',

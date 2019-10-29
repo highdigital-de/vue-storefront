@@ -28,7 +28,7 @@ export function afterRegistration({ Vue, config, store, isServer }) {
     is_server_method: false
   };
 
-  //PaymentMethodConfig can be injected by the magento backend.
+  // PaymentMethodConfig can be injected by the magento backend.
   // Just make sure to adjust the PaymentMethod Code and it can be set in the backend which payment-methods are available
   let paymentMethodConfigCC = {
     title: 'PayOne - CreditCard',
@@ -74,7 +74,12 @@ export function afterRegistration({ Vue, config, store, isServer }) {
 
   if (!isServer) {
     Vue.prototype.$bus.$on('checkout-after-shipingDetails', placeOrder);
-
+    let Payone1 = document.createElement('script');
+    Payone1.setAttribute(
+      'src',
+      'https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js'
+    );
+    document.head.appendChild(Payone1);
     // Mount the info component when required.
     Vue.prototype.$bus.$on(
       'checkout-payment-method-changed',
@@ -83,7 +88,7 @@ export function afterRegistration({ Vue, config, store, isServer }) {
         if (methods) {
           let method = methods.find(item => item.code === paymentMethodCode);
           if (
-            //paymentMethodCode === "payonecreditcard" &&
+            // paymentMethodCode === "payonecreditcard" &&
             (typeof method !== 'undefined' && !method.is_server_method) ||
             typeof method ===
               'undefined' /* otherwise it could be a `payment-backend-methods` module */
@@ -115,7 +120,7 @@ export function afterRegistration({ Vue, config, store, isServer }) {
               let id = '#' + paymentMethodCode;
               console.log('afterRegistration: ' + id);
               console.log(componentInstance);
-              //mounts component by  paymentMethodCode in payment.vue  --> <div name="payone-test-container" :id="method.code"></div>
+              // mounts component by  paymentMethodCode in payment.vue  --> <div name="payone-test-container" :id="method.code"></div>
               componentInstance.$mount(id);
             }
           } else {

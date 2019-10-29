@@ -247,12 +247,12 @@
                 name="payment-method"
                 v-model="payment.paymentMethod"
                 @change="$v.payment.paymentMethod.$touch(); changePaymentMethod();"
-              >              
+              >
               <span class="checkmark" />
             </label>
-            <div name="payone-test-container" :id="method.code"></div>
-                <!-- injection point for Payment-module components via id -->
-                <!-- reset point on 'checkout-payment-method-changed' in payment.ts via name -->
+            <div name="payone-test-container" :id="method.code" />
+            <!-- injection point for Payment-module components via id -->
+            <!-- reset point on 'checkout-payment-method-changed' in payment.ts via name -->
           </div>
           <span class="validation-error" v-if="!$v.payment.paymentMethod.required">{{ $t('Field is required') }}</span>
         </div>
