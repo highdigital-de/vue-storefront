@@ -1,5 +1,6 @@
 <template>
-  <div class="mb15 mt20 payment-cash-on-delivery-info-container">
+<div>
+ <div name="payone-test-container" id="payonesepa">
     <h4 class="mt0">
       Payment Information
     </h4>
@@ -8,6 +9,7 @@
         You are going to pay for this order using your Sepa Überweisung via payone.
       </p>
     </div>
+  </div>
   </div>
 </template>
 

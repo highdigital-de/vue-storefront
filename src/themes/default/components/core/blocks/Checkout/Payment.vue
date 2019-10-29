@@ -1,5 +1,6 @@
 <template>
   <div class="payment pt20">
+    <div id="Payone1" />
     <div class="row pl20">
       <div class="col-xs-1 col-sm-2 col-md-1">
         <div
@@ -246,9 +247,12 @@
                 name="payment-method"
                 v-model="payment.paymentMethod"
                 @change="$v.payment.paymentMethod.$touch(); changePaymentMethod();"
-              >
+              >              
               <span class="checkmark" />
             </label>
+            <div name="payone-test-container" :id="method.code"></div>
+                <!-- injection point for Payment-module components via id -->
+                <!-- reset point on 'checkout-payment-method-changed' in payment.ts via name -->
           </div>
           <span class="validation-error" v-if="!$v.payment.paymentMethod.required">{{ $t('Field is required') }}</span>
         </div>
