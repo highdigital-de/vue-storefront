@@ -3,7 +3,7 @@
     <overlay v-if="overlayActive"/>
     <loader/>
     <div id="viewport" class="w-100 relative">
-      <main-header/>
+      <TopBar />
       <async-sidebar
         :async-component="SearchPanel"
         :is-open="isSearchPanelOpen"
@@ -42,6 +42,7 @@ import { mapState } from 'vuex'
 import EventBus from '@vue-storefront/core/compatibility/plugins/event-bus'
 import AsyncSidebar from 'theme/components/theme/blocks/AsyncSidebar/AsyncSidebar.vue'
 import MainHeader from 'theme/components/core/blocks/Header/Header.vue'
+import TopBar from 'hui/src/components/molecules/TopBar'
 import MainFooter from 'theme/components/core/blocks/Footer/Footer.vue'
 import Overlay from 'theme/components/core/Overlay.vue'
 import Loader from 'theme/components/core/Loader.vue'
@@ -120,7 +121,8 @@ export default {
     CookieNotification,
     OfflineBadge,
     OrderConfirmation,
-    AsyncSidebar
+    AsyncSidebar,
+    TopBar
   }
 }
 </script>
