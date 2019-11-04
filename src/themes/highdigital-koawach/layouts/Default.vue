@@ -26,7 +26,7 @@
         @close="$store.commit('ui/setWishlist')"
       />
       <slot/>
-      <main-footer/>
+      <Footer/>
       <notification/>
       <sign-up/>
       <cookie-notification/>
@@ -43,6 +43,7 @@ import EventBus from '@vue-storefront/core/compatibility/plugins/event-bus'
 import AsyncSidebar from 'theme/components/theme/blocks/AsyncSidebar/AsyncSidebar.vue'
 import MainHeader from 'theme/components/core/blocks/Header/Header.vue'
 import TopBar from 'hui/src/components/molecules/TopBar'
+import Footer from 'hui/src/components/organisms/Footer'
 import MainFooter from 'theme/components/core/blocks/Footer/Footer.vue'
 import Overlay from 'theme/components/core/Overlay.vue'
 import Loader from 'theme/components/core/Loader.vue'
@@ -122,7 +123,8 @@ export default {
     OfflineBadge,
     OrderConfirmation,
     AsyncSidebar,
-    TopBar
+    TopBar,
+    Footer
   }
 }
 </script>
