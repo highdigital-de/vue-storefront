@@ -9,10 +9,16 @@
       <Heading title="5 Gründe für unseren Kakao" />
     </Container>
     <Container>
+      <Carousel :items="carouselItems1" />
+    </Container>
+    <Container>
       <TileRow :tiles="tiles2" />
     </Container>
     <Container>
       <Heading subtitle="du bekommst unseren koffein kakao bei folgenden partnern" />
+    </Container>
+    <Container>
+      <Carousel :items="carouselItems2" :settings="carouselSettings2" />
     </Container>
     <BackgroundBanner background-image="/assets/img/products/wellenlinie.svg" straight-bottom>
       <Container>
@@ -20,6 +26,7 @@
           title="die kakaorevolution auf instagram"
           subtitle="poste #… mit etwas glück featuren wir dich auf unserer seite!"
         />
+        <Carousel :items="carouselItems3" :settings="carouselSettings3" />
       </Container>
     </BackgroundBanner>
     <BackgroundBanner background-image="/assets/img/green-bg.png" straight>
@@ -190,7 +197,65 @@ export default {
           background: '#fce4ec',
           image: '/assets/img/cacao-bg.jpg'
         }
-      ]
+      ],
+      tiles1: [
+        {
+          heading: 'kakao kaufen',
+          cta: 'jetzt entdecken',
+          image: '/assets/img/cacao-bg.jpg'
+        },
+        {
+          heading: 'abo',
+          cta: 'jetzt entdecken',
+          image: ''
+        }
+      ],
+      tiles2: [
+        {
+          heading: 'angebot',
+          cta: 'jetzt für 2,99€ shoppen'
+        },
+        {
+          heading: 'abo',
+          cta: 'jetzt entdecken',
+          image: ''
+        }
+      ],
+      carouselItems1: [
+        { image: '/assets/img/carousel1.png' },
+        { image: '/assets/img/carousel2.png' },
+        { image: '/assets/img/carousel3.png' },
+        { image: '/assets/img/carousel1.png' },
+        { image: '/assets/img/carousel2.png' }
+      ],
+      carouselItems2: [
+        { image: '/assets/img/reseller/1.png' },
+        { image: '/assets/img/reseller/2.png' },
+        { image: '/assets/img/reseller/3.png' },
+        { image: '/assets/img/reseller/4.png' },
+        { image: '/assets/img/reseller/5.png' },
+        { image: '/assets/img/reseller/6.png' },
+        { image: '/assets/img/reseller/1.png' },
+        { image: '/assets/img/reseller/2.png' },
+        { image: '/assets/img/reseller/3.png' },
+        { image: '/assets/img/reseller/4.png' }
+      ],
+      carouselItems3: [
+        { image: '/assets/img/placeholder_gray.png' },
+        { image: '/assets/img/placeholder_gray.png' },
+        { image: '/assets/img/placeholder_gray.png' },
+        { image: '/assets/img/placeholder_gray.png' },
+        { image: '/assets/img/placeholder_gray.png' },
+        { image: '/assets/img/placeholder_gray.png' },
+        { image: '/assets/img/placeholder_gray.png' },
+        { image: '/assets/img/placeholder_gray.png' }
+      ],
+      carouselSettings2: {
+        perView: 6
+      },
+      carouselSettings3: {
+        perView: 4
+      }
     }
   }
 }
