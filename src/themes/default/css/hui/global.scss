@@ -1,0 +1,157 @@
+@font-face {
+  font-family: Poets;
+  src: local("Poets Bold"),
+  local("Poets-Bold"),
+  url(fonts/Poets_bold.ttf);
+  font-weight: bold;
+}
+@font-face {
+  font-family: Futura;
+  src: local("Futura Medium"),
+  local("Futura-Medium"),
+  url(fonts/Futura_medium.ttf);
+  font-weight: Medium;
+}
+
+body {
+  margin: 0;
+  font-family: Futura;
+  font-size: 15px;
+  line-height: 25px;
+  transition: all 0.3s;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: Poets;
+  font-weight: bold;
+  text-decoration: none !important;
+}
+h2 {
+  font-size: 40px;
+  margin: 20px 0;
+  line-height: 1.25;
+}
+h3 {
+  font-size: 22px;
+  line-height: 30px;
+}
+footer {
+  line-height: 30px;
+}
+a {
+  text-decoration: underline;
+  color: #000;
+  cursor: pointer;
+}
+a:hover, a:focus {
+  text-decoration: none;
+}
+
+/* Helper Classes */
+@media only screen and (max-width: 770px) {
+  .mobileMarginBottom {
+    margin-bottom: 30px !important;
+  }
+}
+.center {
+  text-align: center;
+}
+.right {
+  text-align: right;
+}
+
+/* From Zeplin */
+
+.Headline-hausschrift-40-pt {
+  font-family: Poets;
+  font-size: 40px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: 1px;
+}
+
+.hausschrift-32pt {
+  font-family: Poets;
+  font-size: 32px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: 0.8px;
+}
+
+.Text-Style {
+  font-family: Poets;
+  font-size: 30px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.12;
+  letter-spacing: 0.75px;
+}
+
+.hausschrift-22pt {
+  font-family: Poets;
+  font-size: 22px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.67;
+  letter-spacing: 0.75px;
+}
+
+.Subtitle-hausschrift-22-pt {
+  font-family: Poets;
+  font-size: 22px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.67;
+  letter-spacing: 0.75px;
+}
+
+.Button-hausschrift-22-pt {
+  font-family: Poets;
+  font-size: 22px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.2;
+  letter-spacing: 0.75px;
+}
+
+.Button-Futura-Std-18-pt {
+  font-family: FuturaStd;
+  font-size: 18px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.2;
+  letter-spacing: 0.45px;
+}
+
+.Men-hausschrift-18-pt {
+  font-family: Poets;
+  font-size: 18px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: 0.45px;
+}
+
+.Body-Futura-Std-15-pt {
+  font-family: FuturaStd;
+  font-size: 15px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.67;
+  letter-spacing: normal;
+}
+
+/* Helper for Bulma */
+.column {
+  box-sizing: border-box;
+}
