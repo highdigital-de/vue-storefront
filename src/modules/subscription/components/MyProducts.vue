@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import ProductListing from '../../../themes/default/components/core/ProductListing'
+import ProductListing from '../../../themes/highdigital-koawach/components/core/ProductListing'
 
 export default {
   name: 'MyProducts',

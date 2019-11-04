@@ -1,14 +1,14 @@
 {
-  "name": "@vue-storefront/theme-default",
-  "version": "1.9.2",
-  "description": "Default theme for Vue Storefront",
+  "name": "@highdigital/koawach",
+  "version": "0.1.0",
+  "description": "Highdigital theme for koawach",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "cd ../../../ && node core/scripts/server"
   },
-  "author": "pkarw <pkarwatka@divante.pl> and contributors",
-  "license": "MIT",
+  "author": "V.Seehausen <v.seehausen@highdigital.de> and Contributors",
+  "license": "private",
   "dependencies": {
     "bodybuilder": "2.2.13",
     "vue": "^2.6.6",
