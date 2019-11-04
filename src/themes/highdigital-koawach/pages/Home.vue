@@ -1,7 +1,9 @@
 <template>
   <div id="home">
     <Hero :items="items" />
-    <Banner1 />
+    <Container>
+      <Banner1 />
+    </Container>
     <Container>
       <TileRow :tiles="tiles1" />
     </Container>
