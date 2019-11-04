@@ -34,29 +34,6 @@
         <img src="/assets/img/newsletter_form.png" >
       </Container>
     </BackgroundBanner>
-
-    <promoted-offers/>
-
-    <section class="new-collection container px15">
-      <div>
-        <header class="col-md-12">
-          <h2 class="align-center cl-accent">{{ $t('Everything new') }}</h2>
-        </header>
-      </div>
-      <div class="row center-xs">
-        <product-listing columns="4" :products="everythingNewCollection" />
-      </div>
-    </section>
-
-    <section class="container pb60 px15">
-      <div class="row center-xs">
-        <header class="col-md-12 pt40">
-          <h2 class="align-center cl-accent">{{ $t('Get inspired') }}</h2>
-        </header>
-      </div>
-      <tile-links />
-    </section>
-    <Onboard/>
   </div>
 </template>
 
