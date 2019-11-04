@@ -1,6 +1,32 @@
 <template>
   <div id="home">
     <Hero :items="items" />
+    <Banner1 />
+    <Container>
+      <TileRow :tiles="tiles1" />
+    </Container>
+    <Container>
+      <Heading title="5 Gründe für unseren Kakao" />
+    </Container>
+    <Container>
+      <TileRow :tiles="tiles2" />
+    </Container>
+    <Container>
+      <Heading subtitle="du bekommst unseren koffein kakao bei folgenden partnern" />
+    </Container>
+    <BackgroundBanner background-image="/assets/img/products/wellenlinie.svg" straight-bottom>
+      <Container>
+        <Heading
+          title="die kakaorevolution auf instagram"
+          subtitle="poste #… mit etwas glück featuren wir dich auf unserer seite!"
+        />
+      </Container>
+    </BackgroundBanner>
+    <BackgroundBanner background-image="/assets/img/green-bg.png" straight>
+      <Container>
+        <img src="/assets/img/newsletter_form.png" >
+      </Container>
+    </BackgroundBanner>
 
     <promoted-offers/>
 
@@ -30,6 +56,14 @@
 <script>
 // hui compoments
 import Hero from 'hui/src/components/molecules/Hero'
+import Banner1 from 'hui/src/components/molecules/Banner1.vue'
+import Container from 'hui/src/components/atoms/Container.vue'
+import TileRow from 'hui/src/components/molecules/TileRow.vue'
+import Heading from 'hui/src/components/atoms/Heading.vue'
+import Carousel from 'hui/src/components/organisms/Carousel.vue'
+import BackgroundBanner from 'hui/src/components/atoms/BackgroundBanner.vue'
+import Columns from 'hui/src/components/molecules/Columns.vue'
+import Column from 'hui/src/components/molecules/Column.vue'
 
 // query constructor
 import { prepareQuery } from '@vue-storefront/core/modules/catalog/queries/common'
@@ -55,7 +89,15 @@ export default {
     ProductListing,
     PromotedOffers,
     TileLinks,
-    Hero
+    Hero,
+    Banner1,
+    TileRow,
+    Heading,
+    Carousel,
+    BackgroundBanner,
+    Columns,
+    Column,
+    Container
   },
   computed: {
     categories () {
