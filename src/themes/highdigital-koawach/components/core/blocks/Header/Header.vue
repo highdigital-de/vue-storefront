@@ -1,22 +1,22 @@
 <template>
   <TopBar>
-    <template v-slot:left>
+    <template v-slot:left="slotProps">
       <div>
         <template v-if="!canGoBack">
-          <hamburger-icon class="p15 icon bg-cl-secondary pointer" v-if="!canGoBack"/>
+          <hamburger-icon v-if="!canGoBack" :dark="slotProps.dark" />
         </template>
         <template v-else>
-          <return-icon class="p15 icon bg-cl-secondary pointer" v-if="canGoBack"/>
+          <return-icon v-if="canGoBack"/>
         </template>
       </div>
     </template>
     <template v-slot:right>
       <div class="inline-flex right-icons">
-        <search-icon class="p15 icon hidden-xs pointer" />
-        <wishlist-icon class="p15 icon hidden-xs pointer" />
-        <compare-icon class="p15 icon hidden-xs pointer" />
-        <microcart-icon class="p15 icon pointer" />
-        <account-icon class="p15 icon hidden-xs pointer" />
+        <search-icon />
+        <wishlist-icon />
+        <compare-icon />
+        <microcart-icon />
+        <account-icon />
       </div>
     </template>
   </TopBar>
@@ -105,14 +105,6 @@ header {
   transition: top 0.2s ease-in-out;
   &.is-visible {
     top: 0;
-  }
-}
-.icon {
-  opacity: 0.6;
-  &:hover,
-  &:focus {
-    background-color: $color-icon-hover;
-    opacity: 1;
   }
 }
 .right-icons {
