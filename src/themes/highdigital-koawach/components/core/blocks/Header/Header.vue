@@ -10,13 +10,13 @@
         </template>
       </div>
     </template>
-    <template v-slot:right>
+    <template v-slot:right="slotProps">
       <div class="inline-flex right-icons">
-        <search-icon />
-        <wishlist-icon />
-        <compare-icon />
-        <microcart-icon />
-        <account-icon />
+        <search-icon :dark="slotProps.dark" />
+        <wishlist-icon :dark="slotProps.dark" />
+        <compare-icon :dark="slotProps.dark" />
+        <microcart-icon :dark="slotProps.dark" />
+        <account-icon :dark="slotProps.dark" />
       </div>
     </template>
   </TopBar>
