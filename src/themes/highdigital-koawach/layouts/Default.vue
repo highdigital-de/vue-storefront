@@ -3,7 +3,7 @@
     <overlay v-if="overlayActive"/>
     <loader/>
     <div id="viewport" class="w-100 relative">
-      <TopBar />
+      <main-header/>
       <async-sidebar
         :async-component="SearchPanel"
         :is-open="isSearchPanelOpen"

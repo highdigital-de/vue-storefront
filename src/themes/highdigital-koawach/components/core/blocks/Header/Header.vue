@@ -1,68 +1,25 @@
 <template>
-  <div class="header">
-    <header
-      class="fixed w-100 brdr-bottom-1 bg-cl-primary brdr-cl-secondary"
-      :class="{ 'is-visible': navVisible }"
-    >
-      <div class="container px15">
-        <div class="row between-xs middle-xs" v-if="!isCheckoutPage">
-          <div class="col-md-4 col-xs-2 middle-xs">
-            <div>
-              <template v-if="!canGoBack">
-                <hamburger-icon class="p15 icon bg-cl-secondary pointer" v-if="!canGoBack"/>
-              </template>
-              <template v-else>
-                <return-icon class="p15 icon bg-cl-secondary pointer" v-if="canGoBack"/>
-              </template>
-            </div>
-          </div>
-          <div class="col-xs-2 visible-xs">
-            <search-icon class="p15 icon pointer" />
-          </div>
-          <div class="col-md-4 col-xs-4 center-xs pt5">
-            <div>
-              <logo width="auto" height="41px"/>
-            </div>
-          </div>
-          <div class="col-xs-2 visible-xs">
-            <wishlist-icon class="p15 icon pointer" />
-          </div>
-          <div class="col-md-4 col-xs-2 end-xs">
-            <div class="inline-flex right-icons">
-              <search-icon class="p15 icon hidden-xs pointer" />
-              <wishlist-icon class="p15 icon hidden-xs pointer" />
-              <compare-icon class="p15 icon hidden-xs pointer" />
-              <microcart-icon class="p15 icon pointer" />
-              <account-icon class="p15 icon hidden-xs pointer" />
-            </div>
-          </div>
-        </div>
-        <div class="row between-xs middle-xs px15 py5" v-if="isCheckoutPage">
-          <div class="col-xs-5 col-md-3 middle-xs">
-            <div>
-              <router-link :to="localizedRoute('/')" class="cl-tertiary links">
-                {{ $t('Return to shopping') }}
-              </router-link>
-            </div>
-          </div>
-          <div class="col-xs-2 col-md-6 center-xs">
-            <logo width="auto" height="41px"/>
-          </div>
-          <div class="col-xs-5 col-md-3 end-xs">
-            <div>
-              <a v-if="!currentUser" href="#" @click.prevent="gotoAccount" class="cl-tertiary links">
-                {{ $t('Login to your account') }}
-              </a>
-              <span v-else>
-                {{ $t('You are logged in as') }} {{ currentUser.firstname }}
-              </span>
-            </div>
-          </div>
-        </div>
+  <TopBar>
+    <template v-slot:left>
+      <div>
+        <template v-if="!canGoBack">
+          <hamburger-icon class="p15 icon bg-cl-secondary pointer" v-if="!canGoBack"/>
+        </template>
+        <template v-else>
+          <return-icon class="p15 icon bg-cl-secondary pointer" v-if="canGoBack"/>
+        </template>
       </div>
-    </header>
-    <div class="header-placeholder"/>
-  </div>
+    </template>
+    <template v-slot:right>
+      <div class="inline-flex right-icons">
+        <search-icon class="p15 icon hidden-xs pointer" />
+        <wishlist-icon class="p15 icon hidden-xs pointer" />
+        <compare-icon class="p15 icon hidden-xs pointer" />
+        <microcart-icon class="p15 icon pointer" />
+        <account-icon class="p15 icon hidden-xs pointer" />
+      </div>
+    </template>
+  </TopBar>
 </template>
 
 <script>
@@ -76,6 +33,7 @@ import MicrocartIcon from 'theme/components/core/blocks/Header/MicrocartIcon'
 import ReturnIcon from 'theme/components/core/blocks/Header/ReturnIcon'
 import SearchIcon from 'theme/components/core/blocks/Header/SearchIcon'
 import WishlistIcon from 'theme/components/core/blocks/Header/WishlistIcon'
+import TopBar from 'hui/src/components/molecules/TopBar'
 
 export default {
   name: 'Header',
@@ -87,7 +45,8 @@ export default {
     MicrocartIcon,
     ReturnIcon,
     SearchIcon,
-    WishlistIcon
+    WishlistIcon,
+    TopBar
   },
   mixins: [CurrentPage],
   data () {
