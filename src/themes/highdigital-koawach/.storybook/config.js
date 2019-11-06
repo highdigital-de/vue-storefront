@@ -2,6 +2,7 @@ import { configure , addDecorator} from '@storybook/vue';
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import { withContexts } from 'addon-contexts/vue';
+import '../css/main.scss'
 
 Vue.use(VueI18n)
 

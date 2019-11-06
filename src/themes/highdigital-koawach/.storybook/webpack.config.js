@@ -1,4 +1,7 @@
 const path = require('path');
+const rootPath = path.resolve(__dirname, '../')
+const vsPath = path.resolve(__dirname, '../../../../node_modules/@vue-storefront')
+const cssPath = path.resolve(__dirname, '../css')
 
 // Export a function. Accept the base config as the only param.
 module.exports = async ({ config, mode }) => {
@@ -14,7 +17,7 @@ module.exports = async ({ config, mode }) => {
         'vue-style-loader',
         'css-loader',
         'sass-loader'
-      ]
+      ],
     },
     {
       test: /\.ts$/,
@@ -26,6 +29,8 @@ module.exports = async ({ config, mode }) => {
     },
   );
 
-  // Return the altered config
+  config.resolve.alias['theme/css'] = cssPath
+  config.resolve.alias['@vue-storefront'] = path.resolve(__dirname, '../vue-storefront-mock')
+  console.log(config.resolve.alias)
   return config;
 };
