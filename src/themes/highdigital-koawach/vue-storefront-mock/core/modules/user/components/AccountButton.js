@@ -11,7 +11,7 @@ export const AccountButton = {
   },
   methods: {
     goToAccount () {
-      console.log('ggoToAccounto')
+      console.log('goToAccounto')
     },
     logout () {
       console.log('logout')
