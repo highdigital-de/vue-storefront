@@ -1,13 +1,11 @@
 <template>
   <div name="payone-test-container" id="payonecreditcard">
-    <form ref="form" name="paymentform" action="#" method="">
+    <form ref="form" name="paymentform" action="#" method="onSave();return false;">
       <fieldset>
-        <input type="hidden" name="pseudocardpan" id="pseudocardpan">
+        <input type="hidden" name="pseudocardpan" id="pseudocardpan" >
         <input type="hidden" name="truncatedcardpan" id="truncatedcardpan">
-
-        <!-- configure your cardtype-selection here -->
         <label for="cardtypeInput">Card type</label>
-        <select id="cardtype" v-model="cardTypeSelect" @change="onSelectChange($event)">
+        <select id="cardtype" @change="onSelectChange($event)">
           <option value="V">
             VISA
           </option>
@@ -32,31 +30,34 @@
           <span id="cardexpireyear" />
         </span>
         <br>
-        <label for="firstname">Firstname:</label>
-        <input id="firstname" type="text" name="firstname" value="">
+        <label for="firstname1">Firstname:</label>
+        <input id="firstname1" type="text"  value="" v-model.trim ="firstname" >
         <br>
-        <label for="lastname">Lastname:</label>
-        <input id="lastname" type="text" name="lastname" value="">
-
+        <label for="lastname1">Lastname:</label>
+        <input id="lastname1" type="text"  value="" v-model.trim ="lastname" >
+        <br>
         <div id="errorOutput" />
-        <button @click="check">
-          Check
-        </button>
+        <input class="submit" type="submit" value="submit" @click.stop.prevent="check"/>
       </fieldset>
     </form>
     <div id="paymentform" />
   </div>
 </template>
 
-<!--script src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js" /-->
 <script>
 import * as jmd5 from 'js-md5';
-export default {
+import { mapState, mapGetters } from 'vuex';
+import rootStore from '@vue-storefront/core/store';
+
+export default  {
   name: 'PaymentPayOneCreditCard',
   data: function () {
     return {
-      cardTypeSelect: '',
       iframe: '',
+      firstname: '',
+      lastname:'',
+      paymentDetails1: '',
+      respone: '',
       config: {
         fields: {
           cardpan: {
@@ -97,7 +98,7 @@ export default {
           }
         },
         error: 'errorOutput', // area to display error-messages (optional)
-        language: Payone.ClientApi.Language.de // Language to display error-messages
+        language:'' //Payone.ClientApi.Language.de // Language to display error-messages
         // (default: Payone.ClientApi.Language.en)
       },
       request: {
@@ -111,73 +112,28 @@ export default {
         responsetype: 'JSON', // fixed value
         storecarddata: 'yes', // fixed value
         hash: '' // see Chapter 3.1.5.3
-      }
+      },
     }
   },
   methods: {
     // method properties are not cached and always exectued
-    onSelectChange (event) {
+    onSelectChange: function (event) {
       this.iframe.setCardType(event.target.value);
     },
-    check: function () {
-      if (this.iframe.isComplete()) {
-        console.log('Creditcard Form complete')
-        this.iframe.creditCardCheck('checkCallback');
-      } else {
-        console.log('Creditcard Form not complete')
-      }
-    },
-    submit: function () {
-      this.$refs.form.submit()
-    }
-  },
-  created () {
-    console.log('creditCard.vue - mounted is executed');
-    let Payone1 = document.createElement('script')
-    Payone1.onload = () => {
-      console.log(23);
-      window['checkCallback'] = function (response) {
-        console.log('callback:', response);
-        if (respone.status === 'VALID') {
-            console.log("debug: pseudo: "+ response.pseudocardpan+ '  tuncated' +response.truncatedcardpan)
-          document.getElementById('pseudocardpan').value = response.pseudocardpan;
-          document.getElementById('truncatedcardpan').value = response.truncatedcardpan;
-          // TODO: SUBMIT
-          // FORWARD RESPONSE TO VUE-STOREFRONT API
-        }
-      };
-      // TODO: DECIDE WHERE TO STORE HASH and KEY..
-      // WHERE ARE WE CONFIGURING MID, AID, so on?
-
-      console.log('mounted: iframe:', this.iframe);
-    };
   },
   mounted () {
-    // window['Payone'] = Payone;
-    window['checkCallback'] = function (response) {
-      console.log('callback:', response);
-      if (respone.status === 'VALID') {
-        document.getElementById('pseudocardpan').value = response.pseudocardpan;
-        document.getElementById('truncatedcardpan').value = response.truncatedcardpan;
-        // TODO: SUBMIT
-        // FORWARD RESPONSE TO VUE-STOREFRONT API
-      }
-    };
-    // TODO: DECIDE WHERE TO STORE HASH and KEY..
-    // WHERE ARE WE CONFIGURING MID, AID, so on?
+    //TODO: HASH
     var key = '9oSAMVTwh1hdUr6f'
     var message = this.request.aid + this.request.api_version + this.request.encoding + this.request.mid + this.request.mode + this.request.portalid + this.request.request + this.request.responsetype + this.request.storecarddata + key;
     var h = jmd5(message);
     this.request.hash = h;
-
-    console.log('message: ' + message)
-    console.log('hash: ' + this.request.hash);
-
-    this.iframe = new Payone.ClientApi.HostedIFrames(this.config, this.request);
-    this.iframe.setCardType('V');
-
-    console.log(Payone)
-    console.log(this.iframe)
+    window['iFramePayone'] = new Payone.ClientApi.HostedIFrames(this.config, this.request);
+    window['iFramePayone'].setCardType('V');
+    //Call-by-share is javascript
+    //MEANS Internals are happy to be shared and changed. direct changes of the Parameter won't take any effect. 
+    this.iframe = window['iFramePayone']; 
+    //console.log(Payone)
+    //console.log(window['iFramePayone'])
   }
 
 }

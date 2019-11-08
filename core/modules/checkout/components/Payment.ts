@@ -1,6 +1,11 @@
 import { mapState, mapGetters } from 'vuex';
 import RootState from '@vue-storefront/core/types/RootState';
 import toString from 'lodash-es/toString';
+import { TaskQueue } from '@vue-storefront/core/lib/sync';
+//import { Task } from '@vue-storefront/core/lib/sync/types/Task';
+
+import { Logger } from '@vue-storefront/core/lib/logger';
+
 const Countries = require('@vue-storefront/i18n/resource/countries.json');
 
 export const Payment = {
@@ -51,6 +56,11 @@ export const Payment = {
       }
     }
     this.changePaymentMethod();
+    //PAYONE PAYMENT MODUL CALLBACK FUNCTION
+    var self = this;
+    window['checkCallback'] = function(response) {
+      self.checkCallback(response);
+    };
   },
   watch: {
     shippingDetails: {
@@ -78,10 +88,115 @@ export const Payment = {
     }
   },
   methods: {
+    checkCallback(response) {
+      console.log('Debug: checkCallback Payone:', response);
+      if (response.status === 'VALID') {
+        let paymentMethodAdditional = {
+          cardexpiredate: response.cardexpiredate,
+          cardtype: response.cardtype,
+          errorCode: response.errorCode,
+          errorMessage: response.errorMessage,
+          pseudocardpan: response.pseudocardpan,
+          status: response.status,
+          truncatedcardpan: response.truncatedcardpan
+        };
+        this.payment.paymentMethodAdditional = paymentMethodAdditional;
+        console.log(this.payment);
+        console.log('sendDataToCheckout - cc successful');
+
+        this.sendDataToCheckout1();
+      } else {
+        console.log('sendDataToCheckout - cc failed');
+        alert(
+          'Die Kreditkartenprüfung ist fehlgeschlagen. Sind die Eingabedaten korrekt?\n Nachricht: ' +
+            response.errorMessage +
+            '\n Fehlercode: ' +
+            response.errorCode
+        );
+      }
+    },
+
     sendDataToCheckout() {
+      let iframe = window['iFramePayone'];
+      console.log(this.payment.paymentMethod);
+      switch (this.payment.paymentMethod) {
+        case 'payonecreditcard':
+          if (iframe.isComplete()) {
+            iframe.creditCardCheck('checkCallback');
+            console.log('sendDataToCheckout - cc complete');
+          } else {
+            console.log('sendDataToCheckout - cc not complete');
+            alert('Die Kreditkartendaten sind nicht vollständig.');
+          }
+          break;
+        case 'payonesepa':
+          //1 Sepa complete?
+          let completeArr = window['checkSepaComplete']();
+          console.log(completeArr);
+          if (completeArr.complete === true) {
+            this.payment.paymentMethodAdditional = completeArr;
+            /*{
+              iban: completeArr[1],
+              bic: completeArr[2],
+              bankcountry: completeArr[3],
+              currency: completeArr[4]
+            };*/
+            console.log(this.payment);
+            this.sendDataToCheckout1();
+          } else {
+            alert('Eingabe unzulänglich.');
+          }
+          this.handelSepa();
+
+          break;
+        case 'payonepaypal':
+          break;
+        case 'payonesofort':
+          break;
+      }
+    },
+    sendDataToCheckout1() {
       this.$bus.$emit('checkout-after-paymentDetails', this.payment, this.$v);
       this.isFilled = true;
     },
+    handelSepa() {
+      return TaskQueue.execute({
+        url: 'https://api.pay1.de/post-gateway/',
+        payload: {
+          method: 'POST',
+
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          mode: 'no-cors',
+          result: '',
+          resultCode: ''
+        }
+      }).then(task => {
+        console.log('test');
+        console.log(task);
+        Logger.debug('Payment.ts' + task)();
+        return task;
+      });
+    },
+    /*
+    body: JSON.stringify({
+            mid: '16780',
+            portalid: '2012587',
+            key: '3e94def85fc95e50086db07c48538170',
+            api_version: '3.11',
+            mode: 'test',
+            request: 'managemandate',
+            encoding: 'UTF-8',
+            aid: '17076',
+            clearingtype: 'elv',
+            currency: 'EUR',
+            lastname: 'Baier',
+            country: 'DE',
+            bankcountry: 'DE',
+            bankaccount: '2599100003',
+            bankcode: '12345678',
+            city: 'Berlin'
+          }
+    */
     edit() {
       if (this.isFilled) {
         this.$bus.$emit('checkout-before-edit', 'payment');
@@ -255,7 +370,7 @@ export const Payment = {
         'payone-test-container'
       );
       for (let i = 0; i < payoneContainers.length; i++) {
-        //delete innerHtml block of  all occurence's of "payone-test-container"
+        // delete innerHtml block of  all occurence's of "payone-test-container"
         payoneContainers[i].innerHTML = ''; // reset
       }
 

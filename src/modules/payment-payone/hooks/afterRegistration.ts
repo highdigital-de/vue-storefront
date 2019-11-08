@@ -77,7 +77,7 @@ export function afterRegistration({ Vue, config, store, isServer }) {
     let Payone1 = document.createElement('script');
     Payone1.setAttribute(
       'src',
-      'https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js'
+      'https://secure.pay1.de/client-api/js/v1/payone_hosted.js' //TODO: https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js
     );
     document.head.appendChild(Payone1);
     // Mount the info component when required.
@@ -99,6 +99,7 @@ export function afterRegistration({ Vue, config, store, isServer }) {
             switch (paymentMethodCode) {
               case 'payonecreditcard':
                 correctPaymentMethod = true;
+
                 Component = Vue.extend(CreditCardComponent);
                 break;
               case 'payonesepa':
@@ -117,6 +118,7 @@ export function afterRegistration({ Vue, config, store, isServer }) {
             }
             if (correctPaymentMethod === true) {
               componentInstance = new Component();
+              //componentInstance.add(Vue);
               let id = '#' + paymentMethodCode;
               console.log('afterRegistration: ' + id);
               console.log(componentInstance);
