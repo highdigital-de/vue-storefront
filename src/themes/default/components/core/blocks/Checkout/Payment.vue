@@ -1,5 +1,6 @@
 <template>
   <div class="payment pt20">
+    <div id="Payone1" />
     <div class="row pl20">
       <div class="col-xs-1 col-sm-2 col-md-1">
         <div
@@ -30,14 +31,13 @@
       </div>
     </div>
     <div class="row pl20" v-if="isActive">
-      <div class="hidden-xs col-sm-2 col-md-1"/>
+      <div class="hidden-xs col-sm-2 col-md-1" />
       <div class="col-xs-11 col-sm-9 col-md-10">
         <div class="row" v-if="isActive">
           <base-checkbox
             class="col-xs-12 mb15"
             id="sendToShippingAddressCheckbox"
             v-model="sendToShippingAddress"
-            @click="useShippingAddress"
             v-if="!isVirtualCart"
           >
             {{ $t('Copy address data from shipping') }}
@@ -48,7 +48,6 @@
             class="col-xs-12 mb15"
             id="sendToBillingAddressCheckbox"
             v-model="sendToBillingAddress"
-            @click="useBillingAddress"
           >
             {{ $t('Use my billing data') }}
           </base-checkbox>
@@ -189,7 +188,6 @@
             class="col-xs-12 mb15"
             id="generateInvoiceCheckbox"
             v-model="generateInvoice"
-            @click="useGenerateInvoice"
           >
             {{ $t('I want to generate an invoice for the company') }}
           </base-checkbox>
@@ -250,15 +248,18 @@
                 v-model="payment.paymentMethod"
                 @change="$v.payment.paymentMethod.$touch(); changePaymentMethod();"
               >
-              <span class="checkmark"/>
+              <span class="checkmark" />
             </label>
+            <div name="payone-test-container" :id="method.code" />
+            <!-- injection point for Payment-module components via id -->
+            <!-- reset point on 'checkout-payment-method-changed' in payment.ts via name -->
           </div>
           <span class="validation-error" v-if="!$v.payment.paymentMethod.required">{{ $t('Field is required') }}</span>
         </div>
       </div>
     </div>
     <div class="row" v-if="isActive">
-      <div class="hidden-xs col-sm-2 col-md-1"/>
+      <div class="hidden-xs col-sm-2 col-md-1" />
       <div class="col-xs-12 col-sm-9 col-md-11">
         <div class="row">
           <div class="col-xs-12 col-md-8 px20 my30">
@@ -274,7 +275,7 @@
       </div>
     </div>
     <div class="row pl20" v-if="!isActive && isFilled">
-      <div class="hidden-xs col-sm-2 col-md-1"/>
+      <div class="hidden-xs col-sm-2 col-md-1" />
       <div class="col-xs-12 col-sm-9 col-md-11">
         <div class="row fs16 mb35">
           <div class="col-xs-12 h4">
@@ -304,7 +305,7 @@
             <div class="col-md-6 mb15">
               <label class="radioStyled"> {{ getPaymentMethod().title }}
                 <input type="radio" value="" checked disabled name="chosen-payment-method">
-                <span class="checkmark"/>
+                <span class="checkmark" />
               </label>
             </div>
           </div>

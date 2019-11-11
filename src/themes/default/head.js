@@ -32,6 +32,10 @@ export default {
       async: true,
       integrity: 'sha384-GOaSLecPIMCJksN83HLuYf9FToOiQ2Df0+0ntv7ey8zjUHESXhthwvq9hXAZTifA',
       crossorigin: 'anonymous'
+    },
+    {
+      scr: 'https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js',
+      async: true
     }
   ]
 }
