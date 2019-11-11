@@ -7,7 +7,7 @@ import { Compare } from '@vue-storefront/core/modules/compare';
 import { Review } from '@vue-storefront/core/modules/review';
 import { Mailer } from '@vue-storefront/core/modules/mailer';
 import { Wishlist } from '@vue-storefront/core/modules/wishlist';
-import { Mailchimp } from '../modules/mailchimp';
+import { Newsletter } from '@vue-storefront/core/modules/newsletter';
 import { Notification } from '@vue-storefront/core/modules/notification';
 import { RecentlyViewed } from '@vue-storefront/core/modules/recently-viewed';
 import { Url } from '@vue-storefront/core/modules/url';
@@ -17,15 +17,15 @@ import { PromotedOffers } from './promoted-offers';
 import { Ui } from './ui-store';
 // import { GoogleAnalytics } from './google-analytics';
 // import { Hotjar } from './hotjar';
+import { googleTagManager } from './google-tag-manager';
 import { AmpRenderer } from './amp-renderer';
 import { PaymentBackendMethods } from './payment-backend-methods';
 import { PaymentCashOnDelivery } from './payment-cash-on-delivery';
-import { PaymentPayone } from './payment-payone';
 import { RawOutputExample } from './raw-output-example';
-import { Magento2CMS } from './magento-2-cms';
 import { InstantCheckout } from './instant-checkout';
+import { OrderHistory } from './order-history';
 
-// import { Example } from './module-template'
+import { PaymentPayone } from './payment-payone';
 
 // This is how you can extend any of VS modues
 // const extendCartVuex = {
@@ -52,7 +52,7 @@ import { InstantCheckout } from './instant-checkout';
  * In VS 1.8 this modules will be seamlessly lazyLoaded after proper action dispatch
  * - Wishlist
  */
-export const registerModules: VueStorefrontModule[] = [
+export const registerModules: VueStorefrontModule[]=[
   Checkout,
   Catalog,
   Cart,
@@ -60,22 +60,23 @@ export const registerModules: VueStorefrontModule[] = [
   Review,
   Mailer,
   Wishlist,
-  Mailchimp,
+  Newsletter,
   Notification,
   Ui,
   RecentlyViewed,
   Homepage,
   Claims,
   PromotedOffers,
-  Magento2CMS,
+  googleTagManager,
   // GoogleAnalytics,
   // Hotjar,
   PaymentBackendMethods,
-  //PaymentCashOnDelivery,
+  // PaymentCashOnDelivery,
   PaymentPayone,
   RawOutputExample,
   AmpRenderer,
   InstantCheckout,
-  Url
+  Url,
+  OrderHistory
   // Example
 ];

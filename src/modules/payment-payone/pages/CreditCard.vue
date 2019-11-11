@@ -135,7 +135,7 @@ export default {
           }
         },
         error: 'errorOutput', // area to display error-messages (optional)
-        language: '' // Payone.ClientApi.Language.de // Language to display error-messages
+        language: '' //TODO: Payone.ClientApi.Language.de // Language to display error-messages
         // (default: Payone.ClientApi.Language.en)
       },
       request: {

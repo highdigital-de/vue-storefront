@@ -23,7 +23,7 @@ The output cache is set by the following `config/local.json` variables:
 
 ## Dynamic tags
 
-The dynamic tags config option: `useOutputCacheTaging` - if set to `true`, Vue Storefront is generating the special HTTP Header `X-VS-Cache-Tags`
+The dynamic tags config option: `useOutputCacheTagging` - if set to `true`, Vue Storefront is generating the special HTTP Header `X-VS-Cache-Tags`
 
 ```js
 res.setHeader('X-VS-Cache-Tags', cacheTags);
@@ -53,7 +53,7 @@ An example call to clear all product, category, and homepages:
 curl http://localhost:3000/invalidate?tag=product,category,home
 ```
 
-:::danger Warning
+:::warning Caution !
 We strongly recommend you DO NOT USE output cache in development mode. By using it, you won't be able to refresh the UI changes after modifying the Vue components, etc.
 :::
 
@@ -109,3 +109,8 @@ if (context) context.output.cacheTags.add(`home`);
 ```
 
 is in charge of assigning the specific tag with current HTTP request output.
+
+
+## Caching strategies on production
+
+When it comes to caching on production, we made a set of caches at each layer of _Vue Storefront_ infrastructure. There is a section about [_Production setup_](/guide/installation/production-setup.html) in our guide. Additionally read [this article](https://medium.com/the-vue-storefront-journal/caching-on-production-10b00a5614f8) for more details. 
