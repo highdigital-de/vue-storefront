@@ -1,4 +1,3 @@
-/* eslint no-use-before-define: 0 */
 <template>
   <div
     name="payone-test-container"
@@ -81,10 +80,11 @@
   </div>
 </template>
 
+<script src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js" />
 <script lang="ts">
-import * as jmd5 from 'js-md5'
-// import { mapState, mapGetters } from 'vuex'
-// import rootStore from '@vue-storefront/core/store';
+import * as jmd5 from 'js-md5' // TODO move to backend
+
+declare var Payone: any; // fix for ERROR in TS2304: Cannot find name
 
 export default {
   name: 'PaymentPayOneCreditCard',
@@ -135,8 +135,7 @@ export default {
           }
         },
         error: 'errorOutput', // area to display error-messages (optional)
-        language: '' //TODO: Payone.ClientApi.Language.de // Language to display error-messages
-        // (default: Payone.ClientApi.Language.en)
+        language: Payone.ClientApi.Language.de // Language to display error-messages: default: Language.en    
       },
       request: {
         aid: '17076',
@@ -153,7 +152,6 @@ export default {
     }
   },
   methods: {
-    // method properties are not cached and always exectued
     onSelectChange: function (event) {
       this.iframe.setCardType(event.target.value)
     }
@@ -173,9 +171,9 @@ export default {
       this.request.storecarddata +
       key
     var h = jmd5(message)
-    this.request.hash = h
-    // eslint-disable-next-line no-undef
-    window['iFramePayone'] = new Payone.ClientApi.HostedIFrames(this.config, this.request)
+    this.request.hash = h;
+    //this.iframe = new Payone.ClientApi.HostedIFrames(this.config, this.request);
+    window['iFramePayone'] = new Payone.ClientApi.HostedIFrames(this.config, this.request);
     window['iFramePayone'].setCardType('V')
     // Call-by-share is javascript
     // MEANS Internals are happy to be shared and changed. direct changes of the Parameter won't take any effect.
