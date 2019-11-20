@@ -267,21 +267,21 @@ export default {
   data () {
     return {
       bankcountryselect: 'DE',
-      iban: '1234567890',
-      bic: '1234567890',
+      iban: '2599100003',
+      bic: '12345678',
       currency: 'EUR' // TODO Währung?
     }
   },
   methods: {
     isComplete () {
-      console.log('iban: ', this.iban, this.iban.length, 'bic: ', this.bic, this.bic.length)
+      // console.log('iban: ', this.iban, this.iban.length, 'bic: ', this.bic, this.bic.length)
       var complete = false
       if (this.iban !== '' && this.bic !== '') {
         if (this.iban.length >= 10 && this.iban.length <= 34 && this.bic.length >= 8 && this.bic.length <= 11) {
           complete = true
         }
       }
-      let res = {'complete': complete, iban: this.iban, bic: this.bic, bankcountry: this.bankcountryselect, currency: this.currency}
+      let res = {'complete': complete, iban: this.iban, bic: this.bic, bankcountry: this.bankcountryselect, currency: this.currency, approvedMangedMan: false, approvedpreauth: false}
       return res
     // return [complete, this.iban, this.bic, this.bankcountryselect, this.currency];
     }
@@ -290,7 +290,7 @@ export default {
   mounted () {
     var self = this
     window['checkSepaComplete'] = function () {
-      console.log('checkSepaComplete')
+      // console.log('checkSepaComplete')
       return self.isComplete()
     }
   }

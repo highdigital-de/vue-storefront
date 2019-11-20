@@ -1,8 +1,10 @@
 import { mapState, mapGetters } from 'vuex';
+import request from 'request';
 import RootState from '@vue-storefront/core/types/RootState';
 import toString from 'lodash-es/toString';
 import { TaskQueue } from '@vue-storefront/core/lib/sync';
 //import { Task } from '@vue-storefront/core/lib/sync/types/Task';
+import config from 'config'
 
 import { Logger } from '@vue-storefront/core/lib/logger';
 
@@ -115,7 +117,17 @@ export const Payment={
         );
       }
     },
-
+    confirmSepaMandate(res) {
+      if (confirm('SPEA LASTSCHRIFT MANDAT'+decodeURIComponent(res))) {
+        console.log('OK')
+        // AT PLACE ORDER DO preauthorization (server side)
+        return true;
+      } else {
+        console.log('BACK TO PAYMENT')
+        // User did 
+        return false;
+      }
+    },
     sendDataToCheckout() {
       let iframe=window['iFramePayone'];
       console.log(this.payment.paymentMethod);
@@ -130,25 +142,38 @@ export const Payment={
           }
           break;
         case 'payonesepa':
-          //1 Sepa complete?
-          let completeArr=window['checkSepaComplete']();
-          console.log(completeArr);
-          if (completeArr.complete===true) {
-            this.payment.paymentMethodAdditional=completeArr;
-            /*{
-              iban: completeArr[1],
-              bic: completeArr[2],
-              bankcountry: completeArr[3],
-              currency: completeArr[4]
-            };*/
-            console.log(this.payment);
-            this.sendDataToCheckout1();
+          let sepaData=window['checkSepaComplete']();
+          let that=this;
+          if (sepaData.complete===true) {
+            console.log('THB: ', sepaData)
+            this.callApiManagemandate(sepaData)
+              .then(function (res) {
+                //console.log('THB:callApiManagemandate res:', res)
+                let userApproval=false;
+                //TODO: Update Confirm to SFUI Modal and Insert the callApiManagemandate returned HTML-Code in there. 
+                //      Bring the User Answer (approve / denied) back in this logic as userAproval.
+                if (confirm('SPEA LASTSCHRIFT MANDAT'+decodeURIComponent(res))) {
+                  //console.log('OK')
+                  userApproval=true;                   // PLACE-ORDER-Button does the preauthorization 
+                } else {
+                  //console.log('BACK TO PAYMENT')
+                }
+                //Analyse User Answer..
+                if (userApproval===true) {
+                  sepaData.approvedMangedMan=true;
+                  that.payment.paymentMethodAdditional=sepaData; // that = this in surrounding scope
+                  that.sendDataToCheckoutEmitEvent();
+                } else {
+                  alert('Readjust your Payment ')
+                }
+              }, function (err) {
+                console.log(err);
+                alert('Something went wrong wihle transfering your Payment-Data. Try it again.'+err.errorMessage);
+              });
+            console.log(this.payment)
           } else {
             alert('Eingabe unzulänglich.');
           }
-          this.testTaskQueue();
-          this.handelSepa();
-
           break;
         case 'payonepaypal':
           break;
@@ -156,33 +181,25 @@ export const Payment={
           break;
       }
     },
-    sendDataToCheckout1() {
+    sendDataToCheckoutEmitEvent() {
       this.$bus.$emit('checkout-after-paymentDetails', this.payment, this.$v);
       this.isFilled=true;
     },
-    testTaskQueue() {
-      return TaskQueue.execute({
-        url: 'https://httpbin.org/get',
-        payload: {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-          mode: 'no-cors'
-        }
-      }).then(task => {
-        console.log('testTaskQueue');
-        console.log(task);
-        Logger.debug('Payment.ts'+task)();
-        return task;
-      });
-    },
-    testFetch(): Promise<Response> {
+    callApiManagemandate(sepaData): Promise<Response> {
       return new Promise((resolve, reject) => {
-        fetch('https://api.pay1.de/post-gateway/', {
+        let url=config.api.url+'/api/payone/managemandate';
+        fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          mode: 'no-cors',
+          headers: {
+            "Access-Control-Allow-Origin": "http://localhost:8081",
+            "Access-Control-Expose-Headers": "http://localhost:3000",
+            "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+            'Content-Type': 'application/json',
+            'withCredentials': 'true'
+          },
+          mode: 'cors',
           body: JSON.stringify({
-            mid: '16780',
+            /*mid: '16780',
             portalid: '2012587',
             key: '3e94def85fc95e50086db07c48538170',
             api_version: '3.11',
@@ -190,60 +207,75 @@ export const Payment={
             request: 'managemandate',
             encoding: 'UTF-8',
             aid: '17076',
-            clearingtype: 'elv',
-            currency: 'EUR',
-            lastname: 'Baier',
-            country: 'DE',
-            bankcountry: 'DE',
-            bankaccount: '2599100003',
-            bankcode: '12345678',
-            city: 'Berlin'
+            clearingtype: 'elv',*/
+
+            currency: sepaData.currency,
+            country: this.payment.country, //TODO: Compare Storefront and Payone Countrylist
+            bankcountry: sepaData.bankcountry,
+            bankaccount: sepaData.iban,
+            bankcode: sepaData.bic,
+            city: this.payment.city,
+            lastname: this.payment.lastName
           })
         }).then(res => {
-          resolve(res)
+          //console.log('THB: payment callApiManagemandate res', res)
+          res.json().then(result => {
+            // TODO: Handle empty objects 
+            let res=JSON.parse(result.result).answer
+            //console.log(' res.json()2', decodeURIComponent(res))
+            //this.$bus.$emit('modal-show', 'modal-signup')
+            resolve(res)
+          })
         }).catch(err => {
+          console.log('THB: payment testfetch err', err)
           reject(err)
         })
       })
     },
+
     handelSepa() {
+      let url=config.api.url+'/api/payone/post';
       return TaskQueue.execute({
-        url: 'https://api.pay1.de/post-gateway/',
+        url: url,
         payload: {
           method: 'POST',
-
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          mode: 'no-cors',
-          result: '',
-          resultCode: ''
+          mode: 'cors',
+          headers: {
+            //"Access-Control-Allow-Origin": "http://localhost:8081",
+            //"Access-Control-Expose-Headers": "http://localhost:3000",
+            //"Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+            'Content-Type': 'application/json',
+            'withCredentials': 'true'
+          },
+          body: JSON.stringify({
+            "aid": "17076",
+            "api_version": "3.11",
+            "bankaccount": "2599100004",
+            "bankcode": "12345678",
+            "bankcountry": "DE",
+            "clearingtype": "elv",
+            "country": "DE",
+            "currency": "EUR",
+            "encoding": "UTF-8",
+            "hash": "00000000000000000000000000000000000000",
+            "iban": "DE00123456782599100003",
+            "lastname": "Baier",
+            "mid": "16780",
+            "mode": "test",
+            "portalid": "2012587",
+            "request": "managemandate",
+            "responsetype": "JSON",
+            "city": "Berlin"
+          })
         }
       }).then(task => {
-        console.log('test');
-        console.log(task);
-        Logger.debug('Payment.ts'+task)();
+        //wird nicht erreicht
+        Logger.debug('THB:'+task)();
         return task;
       });
+
+
     },
-    /*
-    body: JSON.stringify({
-            mid: '16780',
-            portalid: '2012587',
-            key: '3e94def85fc95e50086db07c48538170',
-            api_version: '3.11',
-            mode: 'test',
-            request: 'managemandate',
-            encoding: 'UTF-8',
-            aid: '17076',
-            clearingtype: 'elv',
-            currency: 'EUR',
-            lastname: 'Baier',
-            country: 'DE',
-            bankcountry: 'DE',
-            bankaccount: '2599100003',
-            bankcode: '12345678',
-            city: 'Berlin'
-          }
-    */
     edit() {
       if (this.isFilled) {
         this.$bus.$emit('checkout-before-edit', 'payment');

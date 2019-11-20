@@ -82,7 +82,7 @@
 
 <script src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js" />
 <script lang="ts">
-import * as jmd5 from 'js-md5' // TODO move to backend
+//import * as jmd5 from 'js-md5' // TODO move to backend
 
 declare var Payone: any; // fix for ERROR in TS2304: Cannot find name
 
@@ -170,8 +170,8 @@ export default {
       this.request.responsetype +
       this.request.storecarddata +
       key
-    var h = jmd5(message)
-    this.request.hash = h;
+    //var h = <(message)
+    //this.request.hash = h;
     //this.iframe = new Payone.ClientApi.HostedIFrames(this.config, this.request);
     window['iFramePayone'] = new Payone.ClientApi.HostedIFrames(this.config, this.request);
     window['iFramePayone'].setCardType('V')
