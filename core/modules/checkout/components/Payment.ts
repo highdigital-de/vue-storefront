@@ -3,7 +3,7 @@ import request from 'request';
 import RootState from '@vue-storefront/core/types/RootState';
 import toString from 'lodash-es/toString';
 import { TaskQueue } from '@vue-storefront/core/lib/sync';
-//import { Task } from '@vue-storefront/core/lib/sync/types/Task';
+// import { Task } from '@vue-storefront/core/lib/sync/types/Task';
 import config from 'config'
 
 import { Logger } from '@vue-storefront/core/lib/logger';
@@ -58,7 +58,7 @@ export const Payment={
       }
     }
     this.changePaymentMethod();
-    //PAYONE PAYMENT MODUL CALLBACK FUNCTION
+    // PAYONE PAYMENT MODUL CALLBACK FUNCTION
     var self=this;
     window['checkCallback']=function (response) {
       self.checkCallback(response);
@@ -124,13 +124,14 @@ export const Payment={
         return true;
       } else {
         console.log('BACK TO PAYMENT')
-        // User did 
+        // User did
         return false;
       }
     },
     sendDataToCheckout() {
       let iframe=window['iFramePayone'];
       console.log(this.payment.paymentMethod);
+      this.payment.paymentMethodAdditional=''; // MAKE SURE WE START FROM ZERO DATA 
       switch (this.payment.paymentMethod) {
         case 'payonecreditcard':
           if (iframe.isComplete()) {
@@ -143,22 +144,38 @@ export const Payment={
           break;
         case 'payonesepa':
           let sepaData=window['checkSepaComplete']();
+          console.log(this.$store)
+          let totals=this.$store.getters['cart/getTotals']
+          let grandTotal=totals.filter(total => total.code==='grand_total');
+          console.log('grandTotal', grandTotal);
+          let amount=undefined
+          if (grandTotal[0].value) {
+            amount=grandTotal[0].value
+          } else {
+            alert('amount undefined');
+            break;
+          }
+          console.log(amount)
+          amount=Math.round(amount*100);
+          sepaData={
+            ...sepaData,
+            amount: amount,
+          }
           let that=this;
           if (sepaData.complete===true) {
-            console.log('THB: ', sepaData)
             this.callApiManagemandate(sepaData)
-              .then(function (res) {
-                //console.log('THB:callApiManagemandate res:', res)
+              .then((res) => {
+                // console.log('THB:callApiManagemandate res:', res)
                 let userApproval=false;
-                //TODO: Update Confirm to SFUI Modal and Insert the callApiManagemandate returned HTML-Code in there. 
+                // TODO: Update Confirm to SFUI Modal and Insert the callApiManagemandate returned HTML-Code in there.
                 //      Bring the User Answer (approve / denied) back in this logic as userAproval.
                 if (confirm('SPEA LASTSCHRIFT MANDAT'+decodeURIComponent(res))) {
-                  //console.log('OK')
-                  userApproval=true;                   // PLACE-ORDER-Button does the preauthorization 
+                  // console.log('OK')
+                  userApproval=true; // PLACE-ORDER-Button does the preauthorization
                 } else {
-                  //console.log('BACK TO PAYMENT')
+                  // console.log('BACK TO PAYMENT')
                 }
-                //Analyse User Answer..
+                // Analyse User Answer..
                 if (userApproval===true) {
                   sepaData.approvedMangedMan=true;
                   that.payment.paymentMethodAdditional=sepaData; // that = this in surrounding scope
@@ -166,7 +183,7 @@ export const Payment={
                 } else {
                   alert('Readjust your Payment ')
                 }
-              }, function (err) {
+              }, (err) => {
                 console.log(err);
                 alert('Something went wrong wihle transfering your Payment-Data. Try it again.'+err.errorMessage);
               });
@@ -191,26 +208,16 @@ export const Payment={
         fetch(url, {
           method: 'POST',
           headers: {
-            "Access-Control-Allow-Origin": "http://localhost:8081",
-            "Access-Control-Expose-Headers": "http://localhost:3000",
-            "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+            'Access-Control-Allow-Origin': 'http://localhost:8081',
+            'Access-Control-Expose-Headers': 'http://localhost:3000',
+            'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
             'Content-Type': 'application/json',
             'withCredentials': 'true'
           },
           mode: 'cors',
           body: JSON.stringify({
-            /*mid: '16780',
-            portalid: '2012587',
-            key: '3e94def85fc95e50086db07c48538170',
-            api_version: '3.11',
-            mode: 'test',
-            request: 'managemandate',
-            encoding: 'UTF-8',
-            aid: '17076',
-            clearingtype: 'elv',*/
-
             currency: sepaData.currency,
-            country: this.payment.country, //TODO: Compare Storefront and Payone Countrylist
+            country: this.payment.country, // TODO: Compare Storefront and Payone Countrylist
             bankcountry: sepaData.bankcountry,
             bankaccount: sepaData.iban,
             bankcode: sepaData.bic,
@@ -218,16 +225,14 @@ export const Payment={
             lastname: this.payment.lastName
           })
         }).then(res => {
-          //console.log('THB: payment callApiManagemandate res', res)
           res.json().then(result => {
-            // TODO: Handle empty objects 
             let res=JSON.parse(result.result).answer
-            //console.log(' res.json()2', decodeURIComponent(res))
-            //this.$bus.$emit('modal-show', 'modal-signup')
+            // console.log(' res.json()2', decodeURIComponent(res))
+            // this.$bus.$emit('modal-show', 'modal-signup')
             resolve(res)
           })
         }).catch(err => {
-          console.log('THB: payment testfetch err', err)
+          console.log('THB: payment managemandate err', err)
           reject(err)
         })
       })
@@ -241,40 +246,38 @@ export const Payment={
           method: 'POST',
           mode: 'cors',
           headers: {
-            //"Access-Control-Allow-Origin": "http://localhost:8081",
-            //"Access-Control-Expose-Headers": "http://localhost:3000",
-            //"Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+            // "Access-Control-Allow-Origin": "http://localhost:8081",
+            // "Access-Control-Expose-Headers": "http://localhost:3000",
+            // "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
             'Content-Type': 'application/json',
             'withCredentials': 'true'
           },
           body: JSON.stringify({
-            "aid": "17076",
-            "api_version": "3.11",
-            "bankaccount": "2599100004",
-            "bankcode": "12345678",
-            "bankcountry": "DE",
-            "clearingtype": "elv",
-            "country": "DE",
-            "currency": "EUR",
-            "encoding": "UTF-8",
-            "hash": "00000000000000000000000000000000000000",
-            "iban": "DE00123456782599100003",
-            "lastname": "Baier",
-            "mid": "16780",
-            "mode": "test",
-            "portalid": "2012587",
-            "request": "managemandate",
-            "responsetype": "JSON",
-            "city": "Berlin"
+            'aid': '17076',
+            'api_version': '3.11',
+            'bankaccount': '2599100004',
+            'bankcode': '12345678',
+            'bankcountry': 'DE',
+            'clearingtype': 'elv',
+            'country': 'DE',
+            'currency': 'EUR',
+            'encoding': 'UTF-8',
+            'hash': '00000000000000000000000000000000000000',
+            'iban': 'DE00123456782599100003',
+            'lastname': 'Baier',
+            'mid': '16780',
+            'mode': 'test',
+            'portalid': '2012587',
+            'request': 'managemandate',
+            'responsetype': 'JSON',
+            'city': 'Berlin'
           })
         }
       }).then(task => {
-        //wird nicht erreicht
+        // wird nicht erreicht
         Logger.debug('THB:'+task)();
         return task;
       });
-
-
     },
     edit() {
       if (this.isFilled) {

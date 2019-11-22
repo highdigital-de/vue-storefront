@@ -25,9 +25,15 @@
           id="cardtype"
           @change="onSelectChange($event)"
         >
-          <option value="V">VISA</option>
-          <option value="M">Mastercard</option>
-          <option value="A">Amex</option>
+          <option value="V">
+            VISA
+          </option>
+          <option value="M">
+            Mastercard
+          </option>
+          <option value="A">
+            Amex
+          </option>
         </select>
         <br>
         <label for="cardpanInput">Cardpan:</label>
@@ -135,7 +141,7 @@ export default {
           }
         },
         error: 'errorOutput', // area to display error-messages (optional)
-        language: Payone.ClientApi.Language.de // Language to display error-messages: default: Language.en    
+        language: Payone.ClientApi.Language.de // Language to display error-messages: default: Language.en
       },
       request: {
         aid: '17076',
