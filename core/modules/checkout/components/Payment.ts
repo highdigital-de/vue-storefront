@@ -131,7 +131,7 @@ export const Payment={
     sendDataToCheckout() {
       let iframe=window['iFramePayone'];
       console.log(this.payment.paymentMethod);
-      this.payment.paymentMethodAdditional=''; // MAKE SURE WE START FROM ZERO DATA 
+      this.payment.paymentMethodAdditional=''; // MAKE SURE WE START FROM ZERO DATA
       switch (this.payment.paymentMethod) {
         case 'payonecreditcard':
           if (iframe.isComplete()) {
@@ -148,7 +148,7 @@ export const Payment={
           let totals=this.$store.getters['cart/getTotals']
           let grandTotal=totals.filter(total => total.code==='grand_total');
           console.log('grandTotal', grandTotal);
-          let amount=undefined
+          let amount
           if (grandTotal[0].value) {
             amount=grandTotal[0].value
           } else {
@@ -159,7 +159,7 @@ export const Payment={
           amount=Math.round(amount*100);
           sepaData={
             ...sepaData,
-            amount: amount,
+            amount: amount
           }
           let that=this;
           if (sepaData.complete===true) {
@@ -219,8 +219,8 @@ export const Payment={
             currency: sepaData.currency,
             country: this.payment.country, // TODO: Compare Storefront and Payone Countrylist
             bankcountry: sepaData.bankcountry,
-            bankaccount: sepaData.iban,
-            bankcode: sepaData.bic,
+            iban: sepaData.iban,
+            bic: sepaData.bic,
             city: this.payment.city,
             lastname: this.payment.lastName
           })
@@ -236,48 +236,6 @@ export const Payment={
           reject(err)
         })
       })
-    },
-
-    handelSepa() {
-      let url=config.api.url+'/api/payone/post';
-      return TaskQueue.execute({
-        url: url,
-        payload: {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            // "Access-Control-Allow-Origin": "http://localhost:8081",
-            // "Access-Control-Expose-Headers": "http://localhost:3000",
-            // "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-            'Content-Type': 'application/json',
-            'withCredentials': 'true'
-          },
-          body: JSON.stringify({
-            'aid': '17076',
-            'api_version': '3.11',
-            'bankaccount': '2599100004',
-            'bankcode': '12345678',
-            'bankcountry': 'DE',
-            'clearingtype': 'elv',
-            'country': 'DE',
-            'currency': 'EUR',
-            'encoding': 'UTF-8',
-            'hash': '00000000000000000000000000000000000000',
-            'iban': 'DE00123456782599100003',
-            'lastname': 'Baier',
-            'mid': '16780',
-            'mode': 'test',
-            'portalid': '2012587',
-            'request': 'managemandate',
-            'responsetype': 'JSON',
-            'city': 'Berlin'
-          })
-        }
-      }).then(task => {
-        // wird nicht erreicht
-        Logger.debug('THB:'+task)();
-        return task;
-      });
     },
     edit() {
       if (this.isFilled) {

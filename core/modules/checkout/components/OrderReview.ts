@@ -54,7 +54,7 @@ export const OrderReview={
       this.callApiPreauthorization(paymentDetails).then((res) => {
         console.log('THB: handleSepa', res)
         if (res.answer.includes('APPROVED')) {
-          let data=res.answer.split(RegExp("\\n|=")); //EXPECTED CASE: status=APPROVED\ntxid=373760396\nuserid=188092189\n
+          let data=res.answer.split(RegExp('\\n|=')); // EXPECTED CASE: status=APPROVED\ntxid=373760396\nuserid=188092189\n
           console.log(data)
           let preauthorizationData={ reference: res.reference, checkoutTime: res.time, status: data[1], txid: data[3], userid: data[5] }
           let paymentDetails=this.$store.state.checkout.paymentDetails;
@@ -74,9 +74,48 @@ export const OrderReview={
         }
       },
         (err) => {
+          console.log('THB:', err)
 
         }
       )
+    }, callApiPreauthorizationCC(paymentDetails): Promise<Response> {
+      return new Promise((resolve, reject) => {
+        let url=config.api.url+'/api/payone/preauthorization';
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Access-Control-Allow-Origin': 'http://localhost:8081',
+            'Access-Control-Expose-Headers': 'http://localhost:3000',
+            'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+            'Content-Type': 'application/json',
+            'withCredentials': 'true'
+          },
+          mode: 'cors',
+
+          body: JSON.stringify({
+            country: paymentDetails.country, // TODO: Compare Storefront and Payone Countrylist
+            city: paymentDetails.city,
+            lastname: paymentDetails.lastName,
+            currency: paymentDetails.paymentMethodAdditional.currency,
+            // PAYONE API: parameter amount < 0 = faulty
+            amount: (paymentDetails.paymentMethodAdditional.amount>=0)? paymentDetails.paymentMethodAdditional.amount:1,
+            bankcountry: paymentDetails.paymentMethodAdditional.bankcountry,
+            iban: paymentDetails.paymentMethodAdditional.iban,
+            bic: paymentDetails.paymentMethodAdditional.bic,
+
+          })
+        }).then(res => {
+          // console.log('THB: payment callApiManagemandate res', res)
+          res.json().then(result => {
+            // TODO: Handle empty objects
+            let response=result.result;
+            resolve(result.result)
+          })
+        }).catch(err => {
+          console.log('THB: payment err', err)
+          reject(err)
+        })
+      })
     },
     callApiPreauthorization(paymentDetails): Promise<Response> {
       return new Promise((resolve, reject) => {
@@ -97,12 +136,12 @@ export const OrderReview={
             city: paymentDetails.city,
             lastname: paymentDetails.lastName,
             currency: paymentDetails.paymentMethodAdditional.currency,
-            bankcountry: paymentDetails.paymentMethodAdditional.bankcountry,
-            bankaccount: paymentDetails.paymentMethodAdditional.iban,
-            bankcode: paymentDetails.paymentMethodAdditional.bic,
             // PAYONE API: parameter amount < 0 = faulty
             amount: (paymentDetails.paymentMethodAdditional.amount>=0)? paymentDetails.paymentMethodAdditional.amount:1,
-            reference: paymentDetails.paymentMethodAdditional.reference
+            bankcountry: paymentDetails.paymentMethodAdditional.bankcountry,
+            iban: paymentDetails.paymentMethodAdditional.iban,
+            bic: paymentDetails.paymentMethodAdditional.bic,
+
           })
         }).then(res => {
           // console.log('THB: payment callApiManagemandate res', res)

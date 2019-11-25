@@ -74,12 +74,12 @@
         >
         <br>
         <div id="errorOutput" />
-        <input
+        <!---input
           class="submit"
           type="submit"
           value="submit"
           @click.stop.prevent="check"
-        >
+        -->
       </fieldset>
     </form>
     <div id="paymentform" />
@@ -93,13 +93,13 @@
 declare var Payone: any; // fix for ERROR in TS2304: Cannot find name
 
 export default {
+
   name: 'PaymentPayOneCreditCard',
   data: function () {
     return {
       iframe: '',
       firstname: '',
       lastname: '',
-      paymentDetails1: '',
       respone: '',
       config: {
         fields: {
@@ -144,13 +144,13 @@ export default {
         language: Payone.ClientApi.Language.de // Language to display error-messages: default: Language.en
       },
       request: {
-        aid: '17076',
-        api_version: '3.11', // your AID
-        encoding: 'UTF-8', // desired encoding
-        mid: '16780', // your MID
-        mode: 'test', // desired mode
-        portalid: '2012587', // your PortalId
-        request: 'creditcardcheck', // fixed value
+        aid: '',
+        api_version: '', // your AID
+        encoding: '', // desired encoding
+        mid: '', // your MID
+        mode: '', // desired mode
+        portalid: '', // your PortalId
+        request: '', // fixed value
         responsetype: 'JSON', // fixed value
         storecarddata: 'yes', // fixed value
         hash: '' // see Chapter 3.1.5.3
@@ -160,32 +160,56 @@ export default {
   methods: {
     onSelectChange: function (event) {
       this.iframe.setCardType(event.target.value)
+    },
+    callApiCcCheck(): Promise<Response> {
+      return new Promise((resolve, reject) => {
+        var config = require("config");
+        let url=config.api.url+'/api/payone/creditcardcheck';
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Access-Control-Allow-Origin': 'http://localhost:8081',
+            'Access-Control-Expose-Headers': 'http://localhost:3000',
+            'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+            'Content-Type': 'application/json',
+            'withCredentials': 'true'
+          },
+          mode: 'cors',
+
+          //body: JSON.stringify({
+         // })
+        }).then(res => {
+          res.json().then(result => {
+            resolve(JSON.parse(result.result))
+          })
+        }).catch(err => {
+          console.log('THB: payment err', err)
+          reject(err)
+        })
+      })
     }
   },
   mounted () {
-    // TODO: HASH
-    var key = '9oSAMVTwh1hdUr6f'
-    var message =
-      this.request.aid +
-      this.request.api_version +
-      this.request.encoding +
-      this.request.mid +
-      this.request.mode +
-      this.request.portalid +
-      this.request.request +
-      this.request.responsetype +
-      this.request.storecarddata +
-      key
-    //var h = <(message)
-    //this.request.hash = h;
-    //this.iframe = new Payone.ClientApi.HostedIFrames(this.config, this.request);
-    window['iFramePayone'] = new Payone.ClientApi.HostedIFrames(this.config, this.request);
-    window['iFramePayone'].setCardType('V')
-    // Call-by-share is javascript
-    // MEANS Internals are happy to be shared and changed. direct changes of the Parameter won't take any effect.
-    this.iframe = window['iFramePayone']
-    // console.log(Payone)
-    // console.log(window['iFramePayone'])
+    this.callApiCcCheck().then((res) => {
+      console.log('THB: aid, hash',res.aid, res.hash)
+      this.request.aid = res.aid;
+      this.request.api_version = res.api_version;
+      this.request.encoding = res.encoding;
+      this.request.mid = res.mid;
+      this.request.mode = res.mode;
+      this.request.portalid = res.portalid;
+      this.request.hash = res.hash;
+      this.request.aid = res.aid;
+      this.request.request = res.request;
+      this.request.storecarddata = res.storecarddata;
+      console.log('THB: request data:',res, this.request);
+
+      window['iFramePayone'] = new Payone.ClientApi.HostedIFrames(this.config, this.request);
+      window['iFramePayone'].setCardType('V')
+      this.iframe = window['iFramePayone']
+          }, err => {
+      console.log(err)
+    })
   }
 }
 </script>
@@ -222,18 +246,15 @@ select {
 select {
   margin-right: 10px;
 }
-
 input,
 .inputIframe,
 select {
   display: block;
   margin-bottom: 10px;
 }
-
 input {
   width: 175px;
 }
-
 #paymentsubmit {
   float: right;
   width: auto;

@@ -2,7 +2,7 @@
   <div name="payone-test-container" id="payonesepa">
     <label for="bankcountry">Banksitz</label>
     <select id="bankcountry" v-model="bankcountryselect" @change="onSelectChange($event)">
-      <option value="AF">
+      <!--option value="AF">
         Afghanistan
       </option>
       <option value="AX">
@@ -43,11 +43,11 @@
       </option>
       <option value="AU">
         Australia
-      </option>
+      </option-->
       <option value="AT">
         Austria
       </option>
-      <option value="AZ">
+      <!--option value="AZ">
         Azerbaijan
       </option>
       <option value="BS">
@@ -247,11 +247,11 @@
       </option>
       <option value="GE">
         Georgia
-      </option>
+      </option-->
       <option value="DE">
         Germany
       </option>
-      <option value="GH">
+      <!--option value="GH">
         Ghana
       </option>
       <option value="GI">
@@ -748,7 +748,7 @@
       </option>
       <option value="ZW">
         Zimbabwe
-      </option>
+      </option-->
     </select>
 
     <label for="iban">Iban:</label>
@@ -765,8 +765,8 @@ export default {
   data () {
     return {
       bankcountryselect: 'DE',
-      iban: '2599100003',
-      bic: '12345678',
+      iban: 'DE00123456782599100003',
+      bic: 'TESTTEST',
       currency: 'EUR' // TODO Währung?
     }
   },
