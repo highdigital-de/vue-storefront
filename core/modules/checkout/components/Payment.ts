@@ -106,7 +106,7 @@ export const Payment={
         console.log(this.payment);
         console.log('sendDataToCheckout - cc successful');
 
-        this.sendDataToCheckout1();
+        this.sendDataToCheckoutEmitEvent();
       } else {
         console.log('sendDataToCheckout - cc failed');
         alert(
@@ -193,8 +193,10 @@ export const Payment={
           }
           break;
         case 'payonepaypal':
+          this.sendDataToCheckoutEmitEvent()
           break;
         case 'payonesofort':
+          this.sendDataToCheckoutEmitEvent()
           break;
       }
     },

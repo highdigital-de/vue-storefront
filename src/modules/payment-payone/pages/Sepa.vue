@@ -779,7 +779,7 @@ export default {
           complete = true
         }
       }
-      let res = {'complete': complete, iban: this.iban, bic: this.bic, bankcountry: this.bankcountryselect, currency: this.currency, approvedMangedMan: false, approvedpreauth: false}
+      let res = {'complete': complete, iban: this.iban, bic: this.bic, bankcountry: this.bankcountryselect, currency: this.currency}
       return res
     // return [complete, this.iban, this.bic, this.bankcountryselect, this.currency];
     }
