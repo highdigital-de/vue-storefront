@@ -26,19 +26,19 @@ Installation Instructions for Payone-Module:
    }
    ]
 
-3)            modified:   src/themes/default/components/core/blocks/Checkout/Payment.vue
-              add to:
-                  <template>
-                  <div class="payment pt20">
-                      <div id="Payone1" />  <-- injection point for Payone Script
-                      ...
-                  <div v-for="(method, index) in paymentMethods" :key="index" class="col-md-6">
-                  ...
-                  <div name="payone-test-container" :id="method.code"></div>
-                      <!-- injection point for Payment-module components via id -->
-                      <!-- reset point on 'checkout-payment-method-changed' in payment.ts -->
+3)             modified:   src/themes/default/components/core/blocks/Checkout/Payment.vue
+               add to:
+                   <template>
+                   <div class="payment pt20">
+                       <div id="Payone1" />  <-- injection point for Payone Script
+                       ...
+                   <div v-for="(method, index) in paymentMethods" :key="index" class="col-md-6">
+                   ...
+                   <div name="payone-test-container" :id="method.code"></div>
+                       <!-- injection point for Payment-module components via id -->
+                       <!-- reset point on 'checkout-payment-method-changed' in payment.ts -->
 
-                  </div>
+                   </div>
 
 4)
 
@@ -68,4 +68,4 @@ Open TODO's:
 - disable / enable "Go review order" button and extend functionality
   - remove check button in credit-card ( automatic field validation)
 - build navigation for eWallets
-- fix initial selection, no reaction bug
+- initial selection of payment is not processed
