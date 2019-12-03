@@ -3,7 +3,7 @@ import i18n from '@vue-storefront/i18n'
 import { Logger } from '@vue-storefront/core/lib/logger'
 import config from 'config'
 
-export const OrderReview={
+export const OrderReview = {
   name: 'OrderReview',
   props: {
     isActive: {
@@ -11,9 +11,9 @@ export const OrderReview={
       required: true
     }
   },
-  data() {
+  data () {
     return {
-      preauthApi: config.api.url+'/api/payone/preauthorization',
+      preauthApi: config.api.url + '/api/payone/preauthorization',
       isFilled: false,
       orderReview: {
         terms: false
@@ -26,79 +26,122 @@ export const OrderReview={
     })
   },
   methods: {
-    placeOrder() {
-      let paymentDetails=this.$store.state.checkout.paymentDetails;
+    placeOrder () {
+      const paymentDetails = this.$store.state.checkout.paymentDetails;
       console.log('THB: paymentMethod', paymentDetails.paymentMethod);
       switch (paymentDetails.paymentMethod) {
-        case 'payonecreditcard':
-          this.handelCC(paymentDetails);
+        case 'payone_creditcard':
+          this.executeCC(paymentDetails);
           break;
-        case 'payonesepa':
-          this.handelSepa(paymentDetails);
+        case 'payone_debit_payment':
+          this.executeSepa(paymentDetails);
           break;
-        case 'payonepaypal':
-          this.handelWlt(paymentDetails, 'PPE')
+        case 'payone_wallet_paypal_express':
+          this.executeWlt(paymentDetails, 'PPE') // walletType
           break;
-        case 'payonesofort':
+        case 'payone_online_bank_transfer_sofortueberweisung':
+          this.executeSb(paymentDetails, 'PNT') // onlinebanktransfertype
           break;
       }
     },
-    placeOrderEmitEvent(paymentMethodAdditional) {
+
+    placeOrderEmitEvent (paymentMethodAdditional) {
       if (this.$store.state.checkout.personalDetails.createAccount) {
         this.register()
       } else {
-        console.log('emit checkout-before-placeOrder')
-        this.$bus.$emit('checkout-before-placeOrder')
         this.$bus.$emit('checkout-do-placeOrder', paymentMethodAdditional)
-        // THANK YOU PAGE. onAfterPlaceOrder... 
+        // THANK YOU PAGE. onAfterPlaceOrder...
       }
     },
-    handelWlt(paymentDetails, wallettype) {
-      let body=this.helperExtractRequestBody(paymentDetails);
+    executeSb (paymentDetails, sbType) {
+      console.log(sbType)
+      const body = {
+        ...this.helperExtractRequestBody(paymentDetails),
+        ...paymentDetails.paymentMethodAdditional,
+
+        clearingtype: 'sb',
+        onlinebanktransfertype: sbType,
+
+        successurl: config.payone.successurl,
+        errorurl: config.payone.errorurl,
+        backurl: config.payone.backurl
+      }
+      console.log('THB: SB; BODY:', body)
+      // Preauth via SF-API
+      this.callApi(this.preauthApi, body).then(
+        (res) => {
+          console.log(res)
+          res = this.helperParseResponse(res.result.answer)
+          console.log('THB: executeSB', res)
+          if (res.status === 'REDIRECT') {
+            paymentDetails.paymentMethodAdditional = {
+              ...paymentDetails.paymentMethodAdditional,
+              ...res
+            }
+            this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
+          }
+          console.log(this.$store.state.checkout.paymentDetails)
+          // alert('Sie werden an den Zahlungsdienstleister weitergeleitet.')
+          window.location.replace(res.redirecturl);
+
+          // TODO Link To Successurl.. AND MANGE the link back
+        },
+        (err) => {
+          console.log('THB: executeWlt', err)
+        })
+    },
+    executeWlt (paymentDetails, wallettype) {
+      let body = this.helperExtractRequestBody(paymentDetails);
       console.log(wallettype)
-      body={
+      body = {
         ...body,
+        ...paymentDetails.paymentMethodAdditional,
         clearingtype: 'wlt',
         wallettype: wallettype,
         successurl: config.payone.successurl,
         errorurl: config.payone.errorurl,
         backurl: config.payone.backurl
       }
-      //Preauth via SF-API
+      // Preauth via SF-API
       this.callApi(this.preauthApi, body).then(
         (res) => {
           console.log(res)
-          res=this.helperParseResponse(res.result.answer)
-          console.log('THB: handelCC', res)
-          if (res.status==='APPROVED') {
-            this.placeOrderEmitEvent({
+          res = this.helperParseResponse(res.result.answer)
+          console.log('THB: executeWlt', res)
+          if (res.status === 'REDIRECT') {
+            paymentDetails.paymentMethodAdditional = {
               ...paymentDetails.paymentMethodAdditional,
               ...res
-            })
+            }
+            this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
           }
-          //TODO Link To Successurl.. AND MANGE the link back
+          console.log(this.$store.state.checkout.paymentDetails)
+          // alert('Sie werden an den Zahlungsdienstleister weitergeleitet.')
+          window.location.replace(res.redirecturl);
+
+          // TODO Link To Successurl.. AND MANGE the link back
         },
         (err) => {
-          console.log('THB: handelWlt', err)
-
+          console.log('THB: executeWlt', err)
         })
     },
-    handelCC(paymentDetails) {
-      //preapare Body for Preauth Creditcard
-      let body=this.helperExtractRequestBody(paymentDetails);
-      let pMA=paymentDetails.paymentMethodAdditional;
-      body={
+    executeCC (paymentDetails) {
+      // preapare Body for Preauth Creditcard
+      let body = this.helperExtractRequestBody(paymentDetails);
+      const pMA = paymentDetails.paymentMethodAdditional;
+      body = {
         ...body,
+        ...paymentDetails.paymentMethodAdditional,
         clearingtype: 'cc',
         cardtype: pMA.cardtype,
         cardexpiredate: pMA.cardexpiredate,
         pseudocardpan: pMA.pseudocardpan
       }
-      //Preauth via SF-API
+      // Preauth via SF-API
       this.callApi(this.preauthApi, body).then((res) => {
-        res=this.helperParseResponse(res.result.answer)
-        console.log('THB: handelCC', res)
-        if (res.status==='APPROVED') {
+        res = this.helperParseResponse(res.result.answer)
+        console.log('THB: executeCC', res)
+        if (res.status === 'APPROVED') {
           this.placeOrderEmitEvent({
             ...paymentDetails.paymentMethodAdditional,
             ...res
@@ -106,31 +149,30 @@ export const OrderReview={
         } else {
           return 0
         }
-
       },
-        (err) => {
-          console.log('THB: handelCC', err)
-        })
+      (err) => {
+        console.log('THB: executeCC', err)
+      })
     },
-    handelSepa(paymentDetails) {
-      if (!paymentDetails||!paymentDetails.paymentMethodAdditional) throw new Error('PaymentDetails undefined')
+    executeSepa (paymentDetails) {
+      if (!paymentDetails || !paymentDetails.paymentMethodAdditional) throw new Error('PaymentDetails undefined')
 
-      let body=this.helperExtractRequestBody(paymentDetails);
-      let pMA=paymentDetails.paymentMethodAdditional;
-      body={
+      let body = this.helperExtractRequestBody(paymentDetails);
+      const pMA = paymentDetails.paymentMethodAdditional;
+      body = {
         ...body,
+        ...paymentDetails.paymentMethodAdditional,
         clearingtype: 'elv',
         bankcountry: pMA.bankcountry,
         iban: pMA.iban,
         bic: pMA.bic
       }
-      //this.callApiPreauthorization(paymentDetails).then(
+      // this.callApiPreauthorization(paymentDetails).then(
       this.callApi(this.preauthApi, body).then((res) => {
-        res=this.helperParseResponse(res.result.answer)
-        console.log('THB: handelSepa', res)
-        if (res.status==='APPROVED') {
-
-          //this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
+        res = this.helperParseResponse(res.result.answer)
+        console.log('THB: executeSepa', res)
+        if (res.status === 'APPROVED') {
+          // this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
           this.placeOrderEmitEvent({
             ...paymentDetails.paymentMethodAdditional,
             ...res
@@ -139,9 +181,9 @@ export const OrderReview={
           return 0
         }
       },
-        (err) => {
-          console.log('THB:', err)
-        }
+      (err) => {
+        console.log('THB:', err)
+      }
       )
     },
     /*
@@ -150,33 +192,30 @@ export const OrderReview={
       REDIRECT: 'status=REDIRECT\nadd_paydata[token]=EC-2CY37259EY975342E\nredirecturl=https://www.sandbox.paypal.com/webscr?useraction=commit&cmd=_express-checkout&token=EC-2CY37259EY975342E\ntxid=375301441\nuserid=189099559'
       ERR: 'status=ERROR\nerrorcode=1095\nerrormessage=Parameter {wallettype} faulty or missing\ncustomermessage=Invalid Wallet provider. Please verify your data.'
      */
-    helperParseResponse(test) {
-
-      let data=test.toString().split(RegExp("\\n"))
+    helperParseResponse (test) {
+      const data = test.toString().split(RegExp('\\n'))
       console.log(data)
-      let obj={}
+      const obj = {}
       data.forEach(item => {
-        //console.log(item)
-        let splitAt=item.indexOf("=");
-        if (splitAt===-1) { return item } else {
-          let p1=item.slice(0, splitAt)
-          let p2=item.slice(splitAt+1, item.length)
-          obj[p1]=p2;
-          //console.log('p1p2:', p1,'  ', p2)
+        // console.log(item)
+        const splitAt = item.indexOf('=');
+        if (splitAt === -1) { return item } else {
+          const p1 = item.slice(0, splitAt)
+          const p2 = item.slice(splitAt + 1, item.length)
+          obj[p1] = p2;
+          // console.log('p1p2:', p1,'  ', p2)
         }
       })
       return obj
     },
-    helperExtractRequestBody(paymentDetails) {
+    helperExtractRequestBody (paymentDetails) {
       return {
         country: paymentDetails.country, // TODO: Compare Storefront and Payone Countrylist
-        lastname: paymentDetails.lastName,
-        currency: 'EUR',
-        amount: (paymentDetails.paymentMethodAdditional.amount>=0)? paymentDetails.paymentMethodAdditional.amount:1,
+        lastname: paymentDetails.lastName
       }
     },
 
-    callApi(url, body) {
+    callApi (url, body) {
       return new Promise((resolve, reject) => {
         fetch(url, {
           method: 'POST',
@@ -194,7 +233,7 @@ export const OrderReview={
           console.log('THB: callApi: url:', url, '\nres', res)
           res.json().then(result => {
             // TODO: Handle empty objects
-            //let response=result.result;
+            // let response=result.result;
             resolve(result)
           })
         }).catch(err => {
@@ -203,82 +242,7 @@ export const OrderReview={
         })
       })
     },
-    callApiPreauthorizationCC(paymentDetails): Promise<Response> {
-      return new Promise((resolve, reject) => {
-        let url=config.api.url+'/api/payone/preauthorization';
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Access-Control-Allow-Origin': 'http://localhost:8081',
-            'Access-Control-Expose-Headers': 'http://localhost:3000',
-            'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-            'Content-Type': 'application/json',
-            'withCredentials': 'true'
-          },
-          mode: 'cors',
-
-          body: JSON.stringify({
-
-            clearingtype: 'cc',
-            cardtype: paymentDetails.paymentMethodAdditional.cardtype,
-            cardexpiredate: paymentDetails.paymentMethodAdditional.cardexpiredate,
-            pseudocardpan: paymentDetails.paymentMethodAdditional.pseudocardpan
-
-
-          })
-        }).then(res => {
-          // console.log('THB: payment callApiManagemandate res', res)
-          res.json().then(result => {
-            // TODO: Handle empty objects
-            let response=result.result;
-            resolve(result.result)
-          })
-        }).catch(err => {
-          console.log('THB: payment err', err)
-          reject(err)
-        })
-      })
-    },
-    callApiPreauthorization(paymentDetails): Promise<Response> {
-      return new Promise((resolve, reject) => {
-        let url=config.api.url+'/api/payone/preauthorization';
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Access-Control-Allow-Origin': 'http://localhost:8081',
-            'Access-Control-Expose-Headers': 'http://localhost:3000',
-            'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-            'Content-Type': 'application/json',
-            'withCredentials': 'true'
-          },
-          mode: 'cors',
-
-          body: JSON.stringify({
-            country: paymentDetails.country, // TODO: Compare Storefront and Payone Countrylist
-            city: paymentDetails.city,
-            lastname: paymentDetails.lastName,
-            currency: paymentDetails.paymentMethodAdditional.currency,
-            // PAYONE API: parameter amount < 0 = faulty
-            amount: (paymentDetails.paymentMethodAdditional.amount>=0)? paymentDetails.paymentMethodAdditional.amount:1,
-            bankcountry: paymentDetails.paymentMethodAdditional.bankcountry,
-            iban: paymentDetails.paymentMethodAdditional.iban,
-            bic: paymentDetails.paymentMethodAdditional.bic
-
-          })
-        }).then(res => {
-          // console.log('THB: payment callApiManagemandate res', res)
-          res.json().then(result => {
-            // TODO: Handle empty objects
-            let response=result.result;
-            resolve(result.result)
-          })
-        }).catch(err => {
-          console.log('THB: payment err', err)
-          reject(err)
-        })
-      })
-    },
-    async register() {
+    async register () {
       this.$bus.$emit('notification-progress-start', i18n.t('Registering the account ...'))
       this.$store.dispatch('user/register', {
         email: this.$store.state.checkout.personalDetails.emailAddress,
@@ -287,7 +251,7 @@ export const OrderReview={
         lastname: this.$store.state.checkout.personalDetails.lastName
       }).then(async (result) => {
         this.$bus.$emit('notification-progress-stop')
-        if (result.code!==200) {
+        if (result.code !== 200) {
           this.onFailure(result)
           // If error includes a word 'password', emit event that eventually focuses on a corresponding field
           if (result.result.includes(i18n.t('password'))) {
@@ -307,6 +271,14 @@ export const OrderReview={
         this.$bus.$emit('notification-progress-stop')
         Logger.error(err, 'checkout')()
       })
+    }
+  },
+  mounted () {
+    const pdetails = this.$store.state.checkout.paymentDetails
+    const pStatus = pdetails.paymentMethodAdditional.paymentStatus
+    console.log('THB: pStatus: ', pStatus, pdetails)
+    if (pStatus && pStatus === 'successfull') {
+      this.placeOrderEmitEvent(pdetails.paymentMethodAdditional)
     }
   }
 }

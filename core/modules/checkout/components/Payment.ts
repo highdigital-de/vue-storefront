@@ -7,10 +7,11 @@ import { TaskQueue } from '@vue-storefront/core/lib/sync';
 import config from 'config'
 
 import { Logger } from '@vue-storefront/core/lib/logger';
+import { getFragmentQueryDocument } from 'apollo-utilities';
 
-const Countries=require('@vue-storefront/i18n/resource/countries.json');
+const Countries = require('@vue-storefront/i18n/resource/countries.json');
 
-export const Payment={
+export const Payment = {
   name: 'Payment',
   props: {
     isActive: {
@@ -18,8 +19,9 @@ export const Payment={
       required: true
     }
   },
-  data() {
+  data () {
     return {
+      preauthApi: config.api.url + '/api/payone/preauthorization',
       isFilled: false,
       countries: Countries,
       payment: this.$store.state.checkout.paymentDetails,
@@ -38,35 +40,35 @@ export const Payment={
       isVirtualCart: 'cart/isVirtualCart'
     })
   },
-  created() {
+  created () {
     if (
-      !this.payment.paymentMethod||
+      !this.payment.paymentMethod ||
       this.notInMethods(this.payment.paymentMethod)
     ) {
-      this.payment.paymentMethod=
-        this.paymentMethods.length>0
+      this.payment.paymentMethod =
+        this.paymentMethods.length > 0
           ? this.paymentMethods[0].code
-          :'cashondelivery';
+          : 'cashondelivery';
     }
   },
-  mounted() {
+  mounted () {
     if (this.payment.firstName) {
       this.initializeBillingAddress();
     } else {
       if (this.payment.company) {
-        this.generateInvoice=true;
+        this.generateInvoice = true;
       }
     }
     this.changePaymentMethod();
     // PAYONE PAYMENT MODUL CALLBACK FUNCTION
-    var self=this;
-    window['checkCallback']=function (response) {
+    const self = this;
+    window['checkCallback'] = function (response) {
       self.checkCallback(response);
     };
   },
   watch: {
     shippingDetails: {
-      handler() {
+      handler () {
         if (this.sendToShippingAddress) {
           this.copyShippingToBillingAddress();
         }
@@ -74,26 +76,26 @@ export const Payment={
       deep: true
     },
     sendToShippingAddress: {
-      handler() {
+      handler () {
         this.useShippingAddress();
       }
     },
     sendToBillingAddress: {
-      handler() {
+      handler () {
         this.useBillingAddress();
       }
     },
     generateInvoice: {
-      handler() {
+      handler () {
         this.useGenerateInvoice();
       }
     }
   },
   methods: {
-    checkCallback(response) {
+    checkCallback (response) {
       console.log('Debug: checkCallback Payone:', response);
-      if (response.status==='VALID') {
-        let paymentMethodAdditional={
+      if (response.status === 'VALID') {
+        const ccData = {
           cardexpiredate: response.cardexpiredate,
           cardtype: response.cardtype,
           errorCode: response.errorCode,
@@ -102,23 +104,25 @@ export const Payment={
           status: response.status,
           truncatedcardpan: response.truncatedcardpan
         };
-        this.payment.paymentMethodAdditional=paymentMethodAdditional;
+        this.payment.paymentMethodAdditional = {
+          ...this.payment.paymentMethodAdditional,
+          ...ccData
+        }
         console.log(this.payment);
         console.log('sendDataToCheckout - cc successful');
-
         this.sendDataToCheckoutEmitEvent();
       } else {
         console.log('sendDataToCheckout - cc failed');
         alert(
-          'Die Kreditkartenprüfung ist fehlgeschlagen. Sind die Eingabedaten korrekt?\n Nachricht: '+
-          response.errorMessage+
-          '\n Fehlercode: '+
+          'Die Kreditkartenprüfung ist fehlgeschlagen. Sind die Eingabedaten korrekt?\n Nachricht: ' +
+          response.errorMessage +
+          '\n Fehlercode: ' +
           response.errorCode
         );
       }
     },
-    confirmSepaMandate(res) {
-      if (confirm('SPEA LASTSCHRIFT MANDAT'+decodeURIComponent(res))) {
+    confirmSepaMandate (res) {
+      if (confirm('SPEA LASTSCHRIFT MANDAT' + decodeURIComponent(res))) {
         console.log('OK')
         // AT PLACE ORDER DO preauthorization (server side)
         return true;
@@ -128,85 +132,97 @@ export const Payment={
         return false;
       }
     },
-    sendDataToCheckout() {
-      let iframe=window['iFramePayone'];
+    isFloat (n) {
+      return Number(n) === n && n % 1 !== 0;
+    },
+    getAmount () {
+      const totals = this.$store.getters['cart/getTotals']
+      const grandTotal = totals.filter(total => total.code === 'grand_total');
+      const gt = grandTotal[0].value
+      if (gt && Number(gt) === gt && gt > 0) {
+        return grandTotal[0].value * 100; // Transformation into Cent
+      } else {
+        alert('Problem with amount: ' + grandTotal[0].value);
+        return -100 // payment will fail.
+      }
+    },
+    sendDataToCheckout () {
+      const a = this.getAmount()
+      if (a === -100) return 0 // do nothing when amount is not sufficient.
+      this.payment.paymentMethodAdditional =
+        {
+          amount: a,
+          currency: 'EUR'
+        } // MAKE SURE WE START FROM ZERO DATA
       console.log(this.payment.paymentMethod);
-      this.payment.paymentMethodAdditional=''; // MAKE SURE WE START FROM ZERO DATA
       switch (this.payment.paymentMethod) {
-        case 'payonecreditcard':
-          if (iframe.isComplete()) {
-            iframe.creditCardCheck('checkCallback');
-            console.log('sendDataToCheckout - cc complete');
-          } else {
-            console.log('sendDataToCheckout - cc not complete');
-            alert('Die Kreditkartendaten sind nicht vollständig.');
-          }
+        case 'payone_creditcard':
+          this.executeCC()
           break;
-        case 'payonesepa':
-          let sepaData=window['checkSepaComplete']();
-          console.log(this.$store)
-          let totals=this.$store.getters['cart/getTotals']
-          let grandTotal=totals.filter(total => total.code==='grand_total');
-          console.log('grandTotal', grandTotal);
-          let amount
-          if (grandTotal[0].value) {
-            amount=grandTotal[0].value
-          } else {
-            alert('amount undefined');
-            break;
-          }
-          console.log(amount)
-          amount=Math.round(amount*100);
-          sepaData={
-            ...sepaData,
-            amount: amount
-          }
-          let that=this;
-          if (sepaData.complete===true) {
-            this.callApiManagemandate(sepaData)
-              .then((res) => {
-                // console.log('THB:callApiManagemandate res:', res)
-                let userApproval=false;
-                // TODO: Update Confirm to SFUI Modal and Insert the callApiManagemandate returned HTML-Code in there.
-                //      Bring the User Answer (approve / denied) back in this logic as userAproval.
-                if (confirm('SPEA LASTSCHRIFT MANDAT'+decodeURIComponent(res))) {
-                  // console.log('OK')
-                  userApproval=true; // PLACE-ORDER-Button does the preauthorization
-                } else {
-                  // console.log('BACK TO PAYMENT')
-                }
-                // Analyse User Answer..
-                if (userApproval===true) {
-                  sepaData.approvedMangedMan=true;
-                  that.payment.paymentMethodAdditional=sepaData; // that = this in surrounding scope
-                  that.sendDataToCheckoutEmitEvent();
-                } else {
-                  alert('Readjust your Payment ')
-                }
-              }, (err) => {
-                console.log(err);
-                alert('Something went wrong wihle transfering your Payment-Data. Try it again.'+err.errorMessage);
-              });
-            console.log(this.payment)
-          } else {
-            alert('Eingabe unzulänglich.');
-          }
+        case 'payone_debit_payment':
+          this.executeDebit()
           break;
-        case 'payonepaypal':
+        case 'payone_wallet_paypal_express':
           this.sendDataToCheckoutEmitEvent()
           break;
-        case 'payonesofort':
+        case 'payone_online_bank_transfer_sofortueberweisung':
+          this.excecuteSb()
           this.sendDataToCheckoutEmitEvent()
           break;
       }
     },
-    sendDataToCheckoutEmitEvent() {
-      this.$bus.$emit('checkout-after-paymentDetails', this.payment, this.$v);
-      this.isFilled=true;
+    executeCC () {
+      const iframe = window['iFramePayone'];
+      if (iframe.isComplete()) {
+        iframe.creditCardCheck('checkCallback');
+        console.log('sendDataToCheckout - cc complete');
+      } else {
+        console.log('sendDataToCheckout - cc not complete');
+        alert('Die Kreditkartendaten sind nicht vollständig.');
+      }
     },
-    callApiManagemandate(sepaData): Promise<Response> {
+    executeDebit () {
+      const sepaData = window['checkSepaComplete']();
+      console.log(this.$store)
+
+      const that = this;
+      if (sepaData.complete === true) {
+        this.callApiManagemandate(sepaData)
+          .then((res) => {
+            if (confirm('SPEA LASTSCHRIFT MANDAT' + decodeURIComponent(res))) {
+              that.payment.paymentMethodAdditional =
+                {
+                  ...that.payment.paymentMethodAdditional,
+                  ...sepaData
+                }
+              that.sendDataToCheckoutEmitEvent();
+            } else {
+              alert('Re-adjust your Payment')
+            }
+          }, (err) => {
+            console.log(err);
+            alert('Something went wrong wihle transfering your Payment-Data. Try it again.' + err.errorMessage);
+          });
+        console.log(this.payment)
+      } else {
+        alert('Eingabe unzulänglich.');
+      }
+    },
+    excecuteSb () {
+      const sepaData = window['checkSbComplete']();
+
+      this.payment.paymentMethodAdditional = {
+        ...this.payment.paymentMethodAdditional,
+        ...sepaData
+      }
+    },
+    sendDataToCheckoutEmitEvent () {
+      this.$bus.$emit('checkout-after-paymentDetails', this.payment, this.$v);
+      this.isFilled = true;
+    },
+    callApiManagemandate (sepaData): Promise<Response> {
       return new Promise((resolve, reject) => {
-        let url=config.api.url+'/api/payone/managemandate';
+        const url = config.api.url + '/api/payone/managemandate';
         fetch(url, {
           method: 'POST',
           headers: {
@@ -228,7 +244,7 @@ export const Payment={
           })
         }).then(res => {
           res.json().then(result => {
-            let res=JSON.parse(result.result).answer
+            const res = JSON.parse(result.result).answer
             // console.log(' res.json()2', decodeURIComponent(res))
             // this.$bus.$emit('modal-show', 'modal-signup')
             resolve(res)
@@ -239,12 +255,12 @@ export const Payment={
         })
       })
     },
-    edit() {
+    edit () {
       if (this.isFilled) {
         this.$bus.$emit('checkout-before-edit', 'payment');
       }
     },
-    hasBillingData() {
+    hasBillingData () {
       if (this.currentUser) {
         if (this.currentUser.hasOwnProperty('default_billing')) {
           return true;
@@ -252,22 +268,22 @@ export const Payment={
       }
       return false;
     },
-    initializeBillingAddress() {
-      let initialized=false;
+    initializeBillingAddress () {
+      let initialized = false;
       if (this.currentUser) {
         if (this.currentUser.hasOwnProperty('default_billing')) {
-          let id=this.currentUser.default_billing;
-          let addresses=this.currentUser.addresses;
-          for (let i=0; i<addresses.length; i++) {
-            if (toString(addresses[i].id)===toString(id)) {
-              this.payment={
+          const id = this.currentUser.default_billing;
+          const addresses = this.currentUser.addresses;
+          for (let i = 0; i < addresses.length; i++) {
+            if (toString(addresses[i].id) === toString(id)) {
+              this.payment = {
                 firstName: addresses[i].firstname,
                 lastName: addresses[i].lastname,
                 company: addresses[i].company,
                 country: addresses[i].country_id,
                 state: addresses[i].region.region
                   ? addresses[i].region.region
-                  :'',
+                  : '',
                 city: addresses[i].city,
                 streetAddress: addresses[i].street[0],
                 apartmentNumber: addresses[i].street[1],
@@ -276,15 +292,15 @@ export const Payment={
                 phoneNumber: addresses[i].telephone,
                 paymentMethod: this.paymentMethods[0].code
               };
-              this.generateInvoice=true;
-              this.sendToBillingAddress=true;
-              initialized=true;
+              this.generateInvoice = true;
+              this.sendToBillingAddress = true;
+              initialized = true;
             }
           }
         }
       }
       if (!initialized) {
-        this.payment={
+        this.payment = {
           firstName: '',
           lastName: '',
           company: '',
@@ -298,22 +314,22 @@ export const Payment={
           phoneNumber: '',
           taxId: '',
           paymentMethod:
-            this.paymentMethods.length>0? this.paymentMethods[0].code:''
+            this.paymentMethods.length > 0 ? this.paymentMethods[0].code : ''
         };
       }
     },
-    useShippingAddress() {
+    useShippingAddress () {
       if (this.sendToShippingAddress) {
         this.copyShippingToBillingAddress();
-        this.sendToBillingAddress=false;
+        this.sendToBillingAddress = false;
       }
 
-      if (!this.sendToBillingAddress&&!this.sendToShippingAddress) {
-        this.payment=this.$store.state.checkout.paymentDetails;
+      if (!this.sendToBillingAddress && !this.sendToShippingAddress) {
+        this.payment = this.$store.state.checkout.paymentDetails;
       }
     },
-    copyShippingToBillingAddress() {
-      this.payment={
+    copyShippingToBillingAddress () {
+      this.payment = {
         firstName: this.shippingDetails.firstName,
         lastName: this.shippingDetails.lastName,
         country: this.shippingDetails.country,
@@ -324,23 +340,23 @@ export const Payment={
         zipCode: this.shippingDetails.zipCode,
         phoneNumber: this.shippingDetails.phoneNumber,
         paymentMethod:
-          this.paymentMethods.length>0? this.paymentMethods[0].code:''
+          this.paymentMethods.length > 0 ? this.paymentMethods[0].code : ''
       };
     },
-    useBillingAddress() {
+    useBillingAddress () {
       if (this.sendToBillingAddress) {
-        let id=this.currentUser.default_billing;
-        let addresses=this.currentUser.addresses;
-        for (let i=0; i<addresses.length; i++) {
-          if (toString(addresses[i].id)===toString(id)) {
-            this.payment={
+        const id = this.currentUser.default_billing;
+        const addresses = this.currentUser.addresses;
+        for (let i = 0; i < addresses.length; i++) {
+          if (toString(addresses[i].id) === toString(id)) {
+            this.payment = {
               firstName: addresses[i].firstname,
               lastName: addresses[i].lastname,
               company: addresses[i].company,
               country: addresses[i].country_id,
               state: addresses[i].region.region
                 ? addresses[i].region.region
-                :'',
+                : '',
               city: addresses[i].city,
               streetAddress: addresses[i].street[0],
               apartmentNumber: addresses[i].street[1],
@@ -348,42 +364,42 @@ export const Payment={
               taxId: addresses[i].vat_id,
               phoneNumber: addresses[i].telephone,
               paymentMethod:
-                this.paymentMethods.length>0
+                this.paymentMethods.length > 0
                   ? this.paymentMethods[0].code
-                  :''
+                  : ''
             };
-            this.generateInvoice=true;
+            this.generateInvoice = true;
           }
         }
-        this.sendToShippingAddress=false;
+        this.sendToShippingAddress = false;
       }
 
-      if (!this.sendToBillingAddress&&!this.sendToShippingAddress) {
-        this.payment=this.$store.state.checkout.paymentDetails;
-        this.generateInvoice=false;
+      if (!this.sendToBillingAddress && !this.sendToShippingAddress) {
+        this.payment = this.$store.state.checkout.paymentDetails;
+        this.generateInvoice = false;
       }
     },
-    useGenerateInvoice() {
+    useGenerateInvoice () {
       if (!this.generateInvoice) {
-        this.payment.company='';
-        this.payment.taxId='';
+        this.payment.company = '';
+        this.payment.taxId = '';
       }
     },
-    getCountryName() {
-      for (let i=0; i<this.countries.length; i++) {
-        if (this.countries[i].code===this.payment.country) {
+    getCountryName () {
+      for (let i = 0; i < this.countries.length; i++) {
+        if (this.countries[i].code === this.payment.country) {
           return this.countries[i].name;
         }
       }
       return '';
     },
-    getPaymentMethod() {
-      for (let i=0; i<this.paymentMethods.length; i++) {
-        if (this.paymentMethods[i].code===this.payment.paymentMethod) {
+    getPaymentMethod () {
+      for (let i = 0; i < this.paymentMethods.length; i++) {
+        if (this.paymentMethods[i].code === this.payment.paymentMethod) {
           return {
             title: this.paymentMethods[i].title
               ? this.paymentMethods[i].title
-              :this.paymentMethods[i].name
+              : this.paymentMethods[i].name
           };
         }
       }
@@ -391,29 +407,29 @@ export const Payment={
         name: ''
       };
     },
-    notInMethods(method) {
-      let availableMethods=this.paymentMethods;
-      if (availableMethods.find(item => item.code===method)) {
+    notInMethods (method) {
+      const availableMethods = this.paymentMethods;
+      if (availableMethods.find(item => item.code === method)) {
         return false;
       }
       return true;
     },
-    changePaymentMethod() {
+    changePaymentMethod () {
       // reset the additional payment method component container if exists.
       if (
         document.getElementById('checkout-order-review-additional-container')
       ) {
         document.getElementById(
           'checkout-order-review-additional-container'
-        ).innerHTML='<div id="checkout-order-review-additional">&nbsp;</div>'; // reset
+        ).innerHTML = '<div id="checkout-order-review-additional">&nbsp;</div>'; // reset
       }
 
-      let payoneContainers=document.getElementsByName(
+      const payoneContainers = document.getElementsByName(
         'payone-test-container'
       );
-      for (let i=0; i<payoneContainers.length; i++) {
+      for (let i = 0; i < payoneContainers.length; i++) {
         // delete innerHtml block of  all occurence's of "payone-test-container"
-        payoneContainers[i].innerHTML=''; // reset
+        payoneContainers[i].innerHTML = ''; // reset
       }
 
       // Let anyone listening know that we've changed payment method, usually a payment extension.

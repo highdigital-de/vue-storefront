@@ -3,7 +3,7 @@
 <template>
   <div
     name="payone-test-container"
-    id="payonepaypal"
+    id="payone_wallet_paypal_express"
   >
     <p>You are going to pay for this order with PayPal.</p>
   </div>

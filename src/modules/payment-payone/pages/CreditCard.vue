@@ -1,7 +1,7 @@
 <template>
   <div
     name="payone-test-container"
-    id="payonecreditcard"
+    id="payone_creditcard"
   >
     <form
       ref="form"

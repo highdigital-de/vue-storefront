@@ -1,5 +1,5 @@
 <template>
-  <div name="payone-test-container" id="payonesepa">
+  <div name="payone-test-container" id="payone_debit_payment">
     <label for="bankcountry">Banksitz</label>
     <select id="bankcountry" v-model="bankcountryselect" @change="onSelectChange($event)">
       <!--option value="AF">
@@ -773,20 +773,20 @@ export default {
   methods: {
     isComplete () {
       // console.log('iban: ', this.iban, this.iban.length, 'bic: ', this.bic, this.bic.length)
-      var complete = false
+      let complete = false
       if (this.iban !== '' && this.bic !== '') {
         if (this.iban.length >= 10 && this.iban.length <= 34 && this.bic.length >= 8 && this.bic.length <= 11) {
           complete = true
         }
       }
-      let res = {'complete': complete, iban: this.iban, bic: this.bic, bankcountry: this.bankcountryselect, currency: this.currency}
+      const res = {'complete': complete, iban: this.iban, bic: this.bic, bankcountry: this.bankcountryselect, currency: this.currency}
       return res
     // return [complete, this.iban, this.bic, this.bankcountryselect, this.currency];
     }
 
   },
   mounted () {
-    var self = this
+    const self = this
     window['checkSepaComplete'] = function () {
       // console.log('checkSepaComplete')
       return self.isComplete()
