@@ -1,21 +1,127 @@
-Installation Instructions for Payone-Module:
+# Installation Instructions for Payone-Module:
 
-//Hashing not in frontend.
+This module was created to support the payment service Payone. At the moment it supports the payment via: 
 
-1. Hashing Function:
-   A: md5 lib: npm i js-md5 --save
-   B SHA-384 lib: npm install ??
+- Creditcard (Iframe-CreditCardCheck, authorization)
+- SEPA-Lastschrift (managemangate, authorization)
+- Payment via Online Wallets like Paypal (authorization)
+- Payment via online bank transfer like sofortüberweisung. (authorization)
 
-2. Add following Script for Payone-CreditCard-IFrame to index.basic.template.html:
+## Which files need to be changed in VSF?
+The following list describes which files needed to be changed in order to achieve the desired functionallity
+
+- **vue-storefront/src/modules/payment-payone** 
+  - /hooks/afterRegistration: 
+    - Register the module, 
+    - payment_method_configs, 
+    - set Iframe Payone1-Attribute (to load iframe) which holds payment compoments, 
+    - Mount Payment-Componentens if requested
+  - /pages/* vue.Components which are shown in /checkout#Payment if one payment method is choosen
+- **/vue-storefront/src/modules/index.ts**
+  - Register module PaymentPayone
+  - Deregister modules: Cash on Delivery, Payment-backend-methods
+- **/vue-storefront/config/local.json**
+  // urls not working with localhost on payone.. 
+  `{ 
+    ..
+    "payone": {
+      // not used: "redirectUrl": "http://f85f056d.ngrok.io/",
+      "successurl": "http://f85f056d.ngrok.io/?a=1",
+      "errorurl": "http://f85f056d.ngrok.io/?a=2",
+      "backurl": "http://f85f056d.ngrok.io/?a=3"
+    }
+  }` 
+
+- **core/modules/checkout/components/Payment.ts**
+  - Conditional Rendering of Payment-Components. 
+  - Extend Functionality of OrderReview Button. ( DO Managemandate, save payment_details..)
+    - mangagemandate for sepa..
+    - creditcardcheck ..
+
+- **core/modules/checkout/components/OrderReview.ts**
+  - Extend Functionality of Place-Order Button. ( DO Managemandate, save payment_details..)
+  - authorization call
+  - relink to external eWallets, onlineBankTransfer
+
+- **src/themes/default/head.js**
+     script: [...
+     `   {
+      scr: 'https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js',
+      async: true
+    }`
+
+- **src/themes/default/components/core/blocks/Checkout/Payment.vue**
+  - added node to inject iframe:     
+  `<div id="Payone1" />`
+  - added node to inject payment-components
+  `         <div name="payone-test-container" :id="method.code"></div>`
+  - injection point for Payment-module components via id
+  - reset point on 'checkout-payment-method-changed' in payment.ts via name 
+
+## Which files need to be changed in VSF-API?
+
+- Defined endpoints in API: 
+    managemandate(body) { }
+    preauthorization(body) { }
+    creditcardcheck(body) { }
+
+- npm i js-md5 for hashing in creditcardcheck endpoint
+  -    "js-md5": "^0.7.3",
+
+
+- **/vue-storefront-api/config/local.json**
+  - Extend Config and set parameters. 
+  - `
+   {
+     "payone": {
+    "mid": "16780",
+    "portalid": "2012587",
+    "key": "xx",
+    "mode": "test",
+    "aid": "17076",
+    "api_version": "3.11"
+  }
+   }`
+
+- **vue-storefront-api/src/api/payone.js**
+  - Endpoint definition 
+  - post/ get usw. 
+  - Header defintion
+
+- **vue-storefront-api/src/platform/abstract/payone.js**
+  - Abstract Class definition
+
+- **vue-storefront-api/src/platform/payone/payone.js**
+  - includes logic and request piping to payone server api
+
+## Installation
+
+In VSF. Just add the above mentioned files and give it a .. 
+- yarn
+- yarn dev
+
+
+
+## Open TODO's:
+
+- deselct payment-methods on init
+- grey out go to review order till isComplete() function gives a valid
+- improve and secure redirect processing for the user (comming back to side)
+- insert typ checking in front end and backend
+- Test, Test, Test
+
+## Pitfall's:
+### iframe is not loading: 
+- check if iframe is in console loaded
+  - make sure iframe is loaded before creditcard component if loaded.
+  otherwise try:
+- Add following Script for Payone-CreditCard-IFrame to index.basic.template.html:
 
     <head> 
     	<script src="https://secure.pay1.de/client-api/js/v1/payone_hosted.js"></script>
     ..
     </head>
-
-   OR:
-
-   Add following to src/themes/head.js
+- Or Add following to src/themes/head.js
    script: [
    ...
    ,
@@ -26,46 +132,3 @@ Installation Instructions for Payone-Module:
    }
    ]
 
-3)             modified:   src/themes/default/components/core/blocks/Checkout/Payment.vue
-               add to:
-                   <template>
-                   <div class="payment pt20">
-                       <div id="Payone1" />  <-- injection point for Payone Script
-                       ...
-                   <div v-for="(method, index) in paymentMethods" :key="index" class="col-md-6">
-                   ...
-                   <div name="payone-test-container" :id="method.code"></div>
-                       <!-- injection point for Payment-module components via id -->
-                       <!-- reset point on 'checkout-payment-method-changed' in payment.ts -->
-
-                   </div>
-
-4)
-
-
-    modified:   core/modules/checkout/components/Payment.ts
-    add to method:    changePaymentMethod() {
-        ....
-      let payoneContainers = document.getElementsByName(
-        'payone-test-container'
-      );
-      for (let i = 0; i < payoneContainers.length; i++) {
-        //delete innerHtml block of  all occurence's of "payone-test-container"
-        payoneContainers[i].innerHTML = ''; // reset
-      }
-
-        //before $bus.emit(event)
-      }
-
-3. Check for working production build
-   - yarn build
-   - yarn start
-
-Open TODO's:
-
-- build sepa component
-- put payment attributes in order
-- disable / enable "Go review order" button and extend functionality
-  - remove check button in credit-card ( automatic field validation)
-- build navigation for eWallets
-- initial selection of payment is not processed

@@ -161,7 +161,9 @@ export default {
         this.notifyEmptyCart()
         this.$router.push(this.localizedRoute('/'))
       } else {
-        this.payment.paymentMethodAdditional = additionalPayload
+        if (additionalPayload !== '') {
+          this.payment.paymentMethodAdditional = additionalPayload
+        }
         this.placeOrder()
       }
     },
@@ -226,6 +228,8 @@ export default {
           isValid = false
         }
       }
+      console.log('THB: checkout isValid: ', isValid)
+      isValid = true // TODO TH: DELET THIS FOR PRODUCTION
       return isValid
     },
     activateHashSection () {
