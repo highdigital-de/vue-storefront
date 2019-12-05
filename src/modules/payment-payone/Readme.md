@@ -21,16 +21,19 @@ The following list describes which files needed to be changed in order to achiev
   - Register module PaymentPayone
   - Deregister modules: Cash on Delivery, Payment-backend-methods
 - **/vue-storefront/config/local.json**
-  // urls not working with localhost on payone.. 
-  `{ 
-    ..
-    "payone": {
-      // not used: "redirectUrl": "http://f85f056d.ngrok.io/",
-      "successurl": "http://f85f056d.ngrok.io/?a=1",
-      "errorurl": "http://f85f056d.ngrok.io/?a=2",
-      "backurl": "http://f85f056d.ngrok.io/?a=3"
+  - urls not working with localhost on payone
+  - use /?a=1,2,3  for success, error, back
+  - ```
+    { 
+      ..
+      "payone": {
+        // not used: "redirectUrl": "http://f85f056d.ngrok.io/",
+        "successurl": "http://f85f056d.ngrok.io/?a=1",
+        "errorurl": "http://f85f056d.ngrok.io/?a=2",
+        "backurl": "http://f85f056d.ngrok.io/?a=3"
+      }
     }
-  }` 
+    ```
 
 - **core/modules/checkout/components/Payment.ts**
   - Conditional Rendering of Payment-Components. 
@@ -44,11 +47,13 @@ The following list describes which files needed to be changed in order to achiev
   - relink to external eWallets, onlineBankTransfer
 
 - **src/themes/default/head.js**
+     ```
      script: [...
      `   {
       scr: 'https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js',
       async: true
     }`
+    ```
 
 - **src/themes/default/components/core/blocks/Checkout/Payment.vue**
   - added node to inject iframe:     
@@ -71,17 +76,15 @@ The following list describes which files needed to be changed in order to achiev
 
 - **/vue-storefront-api/config/local.json**
   - Extend Config and set parameters. 
-  - `
-   {
+  - ```
      "payone": {
     "mid": "16780",
     "portalid": "2012587",
     "key": "xx",
     "mode": "test",
     "aid": "17076",
-    "api_version": "3.11"
-  }
-   }`
+    "api_version": "3.11"}
+    ```
 
 - **vue-storefront-api/src/api/payone.js**
   - Endpoint definition 
@@ -96,10 +99,20 @@ The following list describes which files needed to be changed in order to achiev
 
 ## Installation
 
-In VSF. Just add the above mentioned files and give it a .. 
-- yarn
-- yarn dev
-
+In VSF and VSF-API just add the above mentioned files 
+- VSF: 
+  ```
+  $ yarn
+  $ yarn dev
+  ```
+- VSF-API
+  ```
+  $ docker-compose -f docker-compose.yml -f docker-compose.nodejs.yml up -d
+  $ docker ps // to find the VSF-API-CONTAINER-ID
+  $ docker kill VSF-API-CONTAINER-ID
+  $ yarn 
+  $ yarn dev
+  ```
 
 
 ## Open TODO's:
@@ -117,18 +130,18 @@ In VSF. Just add the above mentioned files and give it a ..
   otherwise try:
 - Add following Script for Payone-CreditCard-IFrame to index.basic.template.html:
 
+    ```
     <head> 
     	<script src="https://secure.pay1.de/client-api/js/v1/payone_hosted.js"></script>
-    ..
     </head>
+    ```
 - Or Add following to src/themes/head.js
-   script: [
-   ...
-   ,
-   {
-   src: 'https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js',
-   async: true,
-   defer: true //Use this command if you script loads html from somewhere else, against crossplattform errors in production build
-   }
-   ]
-
+    ```
+    script: [
+    ...
+    ,{
+    src: 'https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js',
+    async: true,
+    defer: true //Use this command if you script loads html from somewhere else, against crossplattform  errors in production build
+    }]
+    ```
