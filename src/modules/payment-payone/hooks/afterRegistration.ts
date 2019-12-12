@@ -26,12 +26,14 @@ export function afterRegistration ({ Vue, config, store, isServer }) {
     default: true,
     offline: true,
     is_server_method: false
+
   };
 
   // PaymentMethodConfig can be injected by the magento backend.
   // Just make sure to adjust the PaymentMethod Code and it can be set in the backend which payment-methods are available
   const paymentMethodConfigCC = {
     title: 'PayOne - CreditCard',
+    payone_config_payment_method_id: '10',
     code: 'payone_creditcard',
     cost: 0,
     costInclTax: 0, // where do i get the costs from?
@@ -41,6 +43,7 @@ export function afterRegistration ({ Vue, config, store, isServer }) {
   };
   const paymentMethodConfigSepa = {
     title: 'PayOne - Sepa-Lastschrift',
+    payone_config_payment_method_id: '3',
     code: 'payone_debit_payment',
     cost: 0,
     costInclTax: 0, // where do i get the costs from?
@@ -50,6 +53,7 @@ export function afterRegistration ({ Vue, config, store, isServer }) {
   };
   const paymentMethodConfigPayPal = {
     title: 'PayOne - PayPal',
+    payone_config_payment_method_id: '24',
     code: 'payone_wallet_paypal_express',
     cost: 0,
     costInclTax: 0, // where do i get the costs from?
@@ -59,6 +63,7 @@ export function afterRegistration ({ Vue, config, store, isServer }) {
   };
   const paymentMethodConfigSofort = {
     title: 'PayOne - Sofort',
+    payone_config_payment_method_id: '17',
     code: 'payone_online_bank_transfer_sofortueberweisung',
     cost: 0,
     costInclTax: 0, // where do i get the costs from?

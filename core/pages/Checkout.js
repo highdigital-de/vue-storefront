@@ -35,15 +35,21 @@ export default {
         shipping: { $invalid: true },
         payment: { $invalid: true }
       },
-      focusedField: null
+      focusedField: null,
+      redirectResult: ''
     }
   },
   computed: {
+
     ...mapGetters({
       isVirtualCart: 'cart/isVirtualCart',
-      isThankYouPage: 'checkout/isThankYouPage'
+      isThankYouPage: 'checkout/isThankYouPage',
+      personalDetailsStore: 'checkout/getPersonalDetails',
+      paymentDetailsStore: 'checkout/getPaymentDetails',
+      shippingDetailsStore: 'checkout/getShippingDetails'
     })
   },
+
   beforeMount () {
     this.$store.dispatch('checkout/setModifiedAt', Date.now())
     // TO-DO: Use one event with name as apram
@@ -122,7 +128,16 @@ export default {
   },
   watch: {
     '$route': 'activateHashSection',
-    'OnlineOnly': 'onNetworkStatusCheck'
+    'OnlineOnly': 'onNetworkStatusCheck',
+    personalDetailsStore () {
+      this.canExecuteOrder()
+    },
+    paymentDetailsStore () {
+      this.canExecuteOrder()
+    },
+    shippingDetailsStore () {
+      this.canExecuteOrder()
+    }
   },
   methods: {
     onCartAfterUpdate (payload) {
@@ -164,6 +179,7 @@ export default {
         if (additionalPayload !== '') {
           this.payment.paymentMethodAdditional = additionalPayload
         }
+        Logger.debug('onDoPlaceOrder paymentMethodAdditional', this.payment.paymentMethodAdditional)()
         this.placeOrder()
       }
     },
@@ -228,8 +244,10 @@ export default {
           isValid = false
         }
       }
-      console.log('THB: checkout isValid: ', isValid)
-      isValid = true // TODO TH: DELET THIS FOR PRODUCTION
+      if (process.env.NODE_ENV !== 'production') {
+        isValid = true // DELET THIS FOR PRODUCTION
+        Logger.debug('THB: checkout: checkStocks(): IS OVERWRITTEN AlWAYS TRUE\n isProduction: ', process.env.NODE_ENV === 'production')()
+      }
       return isValid
     },
     activateHashSection () {
@@ -264,7 +282,7 @@ export default {
     },
     prepareOrder () {
       this.order = {
-        user_id: this.$store.state.user.current ? this.$store.state.user.current.id.toString() : '',
+        user_id: this.$store.state.user.current ? (this.$store.state.user.current.id ? this.$store.state.user.current.id.toString() : '') : '',
         cart_id: this.$store.state.cart.cartServerToken ? this.$store.state.cart.cartServerToken : '',
         products: this.$store.state.cart.cartItems,
         addressInformation: {
@@ -311,6 +329,7 @@ export default {
     placeOrder () {
       this.checkConnection({ online: typeof navigator !== 'undefined' ? navigator.onLine : true })
       if (this.checkStocks()) {
+        Logger.debug('THB: prepareOrder()', JSON.stringify(this.prepareOrder()))()
         this.$store.dispatch('checkout/placeOrder', { order: this.prepareOrder() })
       } else {
         this.notifyNotAvailable()
@@ -336,6 +355,24 @@ export default {
         this.activateSection('personalDetails')
         this.focusedField = fieldName
       }
+    },
+    canExecuteOrder () {
+      if (
+        this.paymentDetailsStore.emailAddress !== '' &&
+        this.shippingDetailsStore.city !== '' &&
+        this.personalDetailsStore.city !== '' &&
+        this.redirectResult === '1'
+      ) {
+        this.redirectResult = '' // Excute Order only one time
+
+        this.personalDetails = this.personalDetailsStore
+        this.payment = this.paymentDetailsStore
+        this.shipping = this.shippingDetailsStore
+        Logger.debug('personalDetails', JSON.stringify(this.personalDetails))()
+        Logger.debug('payment', JSON.stringify(this.payment, this.shipping))()
+        Logger.debug('shipping', JSON.stringify(this.shipping))()
+        this.onDoPlaceOrder(this.payment.paymentMethodAdditional)
+      }
     }
   },
   metaInfo () {
@@ -350,5 +387,16 @@ export default {
       if (context) context.server.response.redirect('/')
       resolve()
     })
+  },
+  mounted () {
+    // Set Variables
+    var url_string = window.location.href
+    var url = new URL(url_string)
+    var a = url.searchParams.get('a')
+    Logger.debug('THB: Pathvariables are: ', a)()
+    if (a !== '') {
+      this.redirectResult = a;
+      this.canExecuteOrder()
+    }
   }
 }

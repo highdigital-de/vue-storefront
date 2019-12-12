@@ -17,12 +17,14 @@ export const OrderReview = {
       isFilled: false,
       orderReview: {
         terms: false
-      }
+      },
+      currentCartHash: 'abcdefghijk'
     }
   },
   computed: {
     ...mapGetters({
       isVirtualCart: 'cart/isVirtualCart'
+      // currentCartHash: 'cart/getCurrentCartHash'
     })
   },
   methods: {
@@ -44,6 +46,14 @@ export const OrderReview = {
           break;
       }
     },
+    addLinks () {
+      Logger.debug('THB: currentCartHash', this.currentCartHash)()
+      return {
+        successurl: config.payone.hostUrlForRedirectBack + '/?h=' + this.currentCartHash + '&a=1',
+        errorurl: config.payone.hostUrlForRedirectBack + '/?h=' + this.currentCartHash + '&a=2',
+        backurl: config.payone.hostUrlForRedirectBack + '/?h=' + this.currentCartHash + '&a=3'
+      }
+    },
 
     placeOrderEmitEvent (paymentMethodAdditional) {
       if (this.$store.state.checkout.personalDetails.createAccount) {
@@ -61,10 +71,7 @@ export const OrderReview = {
 
         clearingtype: 'sb',
         onlinebanktransfertype: sbType,
-
-        successurl: config.payone.successurl,
-        errorurl: config.payone.errorurl,
-        backurl: config.payone.backurl
+        ...this.addLinks()
       }
       console.log('THB: SB; BODY:', body)
       // Preauth via SF-API
@@ -98,9 +105,7 @@ export const OrderReview = {
         ...paymentDetails.paymentMethodAdditional,
         clearingtype: 'wlt',
         wallettype: wallettype,
-        successurl: config.payone.successurl,
-        errorurl: config.payone.errorurl,
-        backurl: config.payone.backurl
+        ...this.addLinks()
       }
       // Preauth via SF-API
       this.callApi(this.preauthApi, body).then(

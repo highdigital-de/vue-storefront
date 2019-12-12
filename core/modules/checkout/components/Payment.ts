@@ -140,7 +140,7 @@ export const Payment = {
       const grandTotal = totals.filter(total => total.code === 'grand_total');
       const gt = grandTotal[0].value
       if (gt && Number(gt) === gt && gt > 0) {
-        return grandTotal[0].value * 100; // Transformation into Cent
+        return Math.round(grandTotal[0].value * 100); // Transformation into Cent
       } else {
         alert('Problem with amount: ' + grandTotal[0].value);
         return -100 // payment will fail.

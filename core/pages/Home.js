@@ -9,10 +9,60 @@ import { Logger } from '@vue-storefront/core/lib/logger'
 export default {
   name: 'Home',
   mixins: [Composite],
+  data () {
+    return {
+      a: '',
+      h: ''
+    }
+  },
   computed: {
+    ...mapGetters({
+      personalDetails: 'checkout/getPersonalDetails',
+      paymentDetails: 'checkout/getPaymentDetails',
+      shippingDetails: 'checkout/getShippingDetails',
+      currentCartHash: 'cart/getCurrentCartHash'}),
     ...mapGetters('category', ['getCategories']),
     rootCategories () {
       return this.getCategories
+    }
+  },
+  watch: {
+    personalDetails () {
+      this.onAllDetails()
+    },
+    paymentDetails () {
+      this.onAllDetails()
+    },
+    shippingDetails () {
+      this.onAllDetails()
+    },
+    currentCartHash () {
+      this.onAllDetails()
+    }
+
+  },
+  methods: {
+    onAllDetails () {
+      if (
+        this.paymentDetails.emailAddress !== '' &&
+        this.shippingDetails.city !== '' &&
+        this.personalDetails.city !== '' &&
+        this.a !== ''
+      ) {
+        if (this.h === this.currentCartHash) {
+          if (this.a === '1') {
+            this.$router.push(this.localizedRoute('/checkout/?h=' + this.h + '&a=' + this.a))
+          } else if (this.a === '2') {
+            this.$router.push(this.localizedRoute('/checkout/?h=' + this.h + '&a=' + this.a))
+            alert('Something went Wrong! \nPlease repeat the payment process')
+          } else if (this.a === '3') {
+            this.$router.push(this.localizedRoute('/checkout/?h=' + this.h + '&a=' + this.a))
+            this.$store.commit('ui/setMicrocart', false)
+          }
+        } else {
+          alert('carthash is not matching, try again.\n' + this.h + ' !== ' + this.currentCartHash)
+        }
+      }
     }
   },
   async asyncData ({ store, route, context }) { // this is for SSR purposes to prefetch data
@@ -37,31 +87,8 @@ export default {
   mounted () {
     var url_string = window.location.href
     var url = new URL(url_string)
-    var a = url.searchParams.get('a')
-    console.log('THB:', a)
-    console.log(JSON.stringify(this.$store.state.checkout))
-    if (a === '1') { // Success
-      alert('success')
-      this.$bus.$emit('checkout-do-placeOrder', '')
-      // PLACE ORDER ACTION
-      this.$store.dispatch('checkout/setThankYouPage', true)
-      this.$store.commit('ui/setMicrocart', false)
-      this.$router.push(this.localizedRoute('/checkout'))
-      this.$store.dispatch('cart/clear', { recreateAndSyncCart: true }, { root: true })
-    } else if (a === '2') {
-      // ERROR
-      this.$store.commit('ui/setMicrocart', false)
-      this.$router.push(this.localizedRoute('/checkout'))
-      alert('Please redo the payment process')
-    } else if (a === '3') {
-      // back
-      this.$store.commit('ui/setMicrocart', false)
-      this.$router.push(this.localizedRoute('/checkout'))
-      alert('back')
-    }
+    this.a = url.searchParams.get('a')
+    this.h = url.searchParams.get('h')
+    this.onAllDetails()
   }
-  // this.$store.dispatch('checkout/setThankYouPage', true)
-  // this.$store.dispatch('cart/clear', { recreateAndSyncCart: true }, {root: true})
-  // this.$router.push(this.localizedRoute('/checkout'))
-  // this.$bus.$emit('checkout-before-edit', 'payment')
 }
