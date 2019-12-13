@@ -244,7 +244,10 @@ export const Payment = {
           })
         }).then(res => {
           res.json().then(result => {
-            const res = JSON.parse(result.result).answer
+            console.log(result.result)
+            console.log(result.result.answer)
+            const res = result.result.answer
+            //const res = JSON.parse(result.result).answer
             // console.log(' res.json()2', decodeURIComponent(res))
             // this.$bus.$emit('modal-show', 'modal-signup')
             resolve(res)

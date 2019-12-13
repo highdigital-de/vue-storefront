@@ -180,7 +180,10 @@ export default {
          // })
         }).then(res => {
           res.json().then(result => {
-            resolve(JSON.parse(result.result))
+            console.log('creditcard vue res', result)
+            // resolve(JSON.parse(result.result))
+            resolve(result.result)
+
           })
         }).catch(err => {
           console.log('THB: payment err', err)
