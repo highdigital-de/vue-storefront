@@ -36,7 +36,8 @@ export default {
         payment: { $invalid: true }
       },
       focusedField: null,
-      redirectResult: ''
+      a: '',
+      h: ''
     }
   },
   computed: {
@@ -46,8 +47,8 @@ export default {
       isThankYouPage: 'checkout/isThankYouPage',
       personalDetailsStore: 'checkout/getPersonalDetails',
       paymentDetailsStore: 'checkout/getPaymentDetails',
-      shippingDetailsStore: 'checkout/getShippingDetails'
-    })
+      shippingDetailsStore: 'checkout/getShippingDetails',
+      currentCartHash: 'cart/getCurrentCartHash'})
   },
 
   beforeMount () {
@@ -131,12 +132,19 @@ export default {
     'OnlineOnly': 'onNetworkStatusCheck',
     personalDetailsStore () {
       this.canExecuteOrder()
+      console.log(this.personalDetailsStore)
     },
     paymentDetailsStore () {
       this.canExecuteOrder()
+      console.log(this.paymentDetailsStore)
     },
     shippingDetailsStore () {
       this.canExecuteOrder()
+      console.log(this.shippingDetailsStore)
+    },
+    currentCartHash () {
+      this.canExecuteOrder()
+      console.log(this.currentCartHash)
     }
   },
   methods: {
@@ -161,7 +169,7 @@ export default {
       }
       this.$store.dispatch('checkout/setThankYouPage', true)
       this.$store.dispatch('user/getOrdersHistory', { refresh: true, useCache: true })
-      Logger.debug(payload.order)()
+      console.log(payload.order)
     },
     onBeforeEdit (section) {
       this.activateSection(section)
@@ -179,7 +187,7 @@ export default {
         if (additionalPayload !== '') {
           this.payment.paymentMethodAdditional = additionalPayload
         }
-        Logger.debug('onDoPlaceOrder paymentMethodAdditional', this.payment.paymentMethodAdditional)()
+        console.log('onDoPlaceOrder paymentMethodAdditional', this.payment.paymentMethodAdditional)
         this.placeOrder()
       }
     },
@@ -246,7 +254,7 @@ export default {
       }
       if (process.env.NODE_ENV !== 'production') {
         isValid = true // DELET THIS FOR PRODUCTION
-        Logger.debug('THB: checkout: checkStocks(): IS OVERWRITTEN AlWAYS TRUE\n isProduction: ', process.env.NODE_ENV === 'production')()
+        console.log('THB: checkout: checkStocks(): IS OVERWRITTEN AlWAYS TRUE\n isProduction: ', process.env.NODE_ENV === 'production')
       }
       return isValid
     },
@@ -329,7 +337,7 @@ export default {
     placeOrder () {
       this.checkConnection({ online: typeof navigator !== 'undefined' ? navigator.onLine : true })
       if (this.checkStocks()) {
-        Logger.debug('THB: prepareOrder()', JSON.stringify(this.prepareOrder()))()
+        console.log('THB: prepareOrder()', JSON.stringify(this.prepareOrder()))
         this.$store.dispatch('checkout/placeOrder', { order: this.prepareOrder() })
       } else {
         this.notifyNotAvailable()
@@ -357,20 +365,30 @@ export default {
       }
     },
     canExecuteOrder () {
+      console.log('canExe: c', this.currentCartHash)
+      console.log('canExe: h', this.h)
+      console.log('canExe: b', this.h === this.currentCartHash)
       if (
         this.paymentDetailsStore.emailAddress !== '' &&
         this.shippingDetailsStore.city !== '' &&
         this.personalDetailsStore.city !== '' &&
-        this.redirectResult === '1'
+        this.a === '1' &&
+        this.h === this.currentCartHash
       ) {
-        this.redirectResult = '' // Excute Order only one time
+        console.log('canExecuteOrder c', this.currentCartHash)
+        console.log('canExecuteOrder h', this.h)
+        console.log('canExecuteOrder b', this.h === this.currentCartHash)
+
+        this.a = '' // Excute Order only one time
+        this.h = ''
 
         this.personalDetails = this.personalDetailsStore
         this.payment = this.paymentDetailsStore
         this.shipping = this.shippingDetailsStore
-        Logger.debug('personalDetails', JSON.stringify(this.personalDetails))()
-        Logger.debug('payment', JSON.stringify(this.payment, this.shipping))()
-        Logger.debug('shipping', JSON.stringify(this.shipping))()
+
+        console.log('personalDetails', JSON.stringify(this.personalDetails))
+        console.log('payment', JSON.stringify(this.payment, this.shipping))
+        console.log('shipping', JSON.stringify(this.shipping))
         this.onDoPlaceOrder(this.payment.paymentMethodAdditional)
       }
     }
@@ -392,10 +410,12 @@ export default {
     // Set Variables
     var url_string = window.location.href
     var url = new URL(url_string)
-    var a = url.searchParams.get('a')
-    Logger.debug('THB: Pathvariables are: ', a)()
-    if (a !== '') {
-      this.redirectResult = a;
+    this.a = url.searchParams.get('a')
+    this.h = url.searchParams.get('h')
+
+    console.log('THB: Pathvariables are: ', this.a, ' and ', this.h)
+    if (this.a !== '') {
+      this.a = this.a;
       this.canExecuteOrder()
     }
   }

@@ -19,8 +19,7 @@ export default {
     ...mapGetters({
       personalDetails: 'checkout/getPersonalDetails',
       paymentDetails: 'checkout/getPaymentDetails',
-      shippingDetails: 'checkout/getShippingDetails',
-      currentCartHash: 'cart/getCurrentCartHash'}),
+      shippingDetails: 'checkout/getShippingDetails'}),
     ...mapGetters('category', ['getCategories']),
     rootCategories () {
       return this.getCategories
@@ -28,18 +27,17 @@ export default {
   },
   watch: {
     personalDetails () {
+      console.log('1')
       this.onAllDetails()
     },
     paymentDetails () {
+      console.log('2')
       this.onAllDetails()
     },
     shippingDetails () {
-      this.onAllDetails()
-    },
-    currentCartHash () {
+      console.log('3')
       this.onAllDetails()
     }
-
   },
   methods: {
     onAllDetails () {
@@ -49,18 +47,19 @@ export default {
         this.personalDetails.city !== '' &&
         this.a !== ''
       ) {
-        if (this.h === this.currentCartHash) {
-          if (this.a === '1') {
-            this.$router.push(this.localizedRoute('/checkout/?h=' + this.h + '&a=' + this.a))
-          } else if (this.a === '2') {
-            this.$router.push(this.localizedRoute('/checkout/?h=' + this.h + '&a=' + this.a))
-            alert('Something went Wrong! \nPlease repeat the payment process')
-          } else if (this.a === '3') {
-            this.$router.push(this.localizedRoute('/checkout/?h=' + this.h + '&a=' + this.a))
-            this.$store.commit('ui/setMicrocart', false)
-          }
-        } else {
-          alert('carthash is not matching, try again.\n' + this.h + ' !== ' + this.currentCartHash)
+        console.log('onAllDetails a ' + this.a)
+        if (this.a === '1') {
+          console.log('Path a=1 push')
+
+          this.$router.push(this.localizedRoute('/checkout/?h=' + this.h + '&a=' + this.a))
+        } else if (this.a === '2') {
+          this.$router.push(this.localizedRoute('/checkout/?h=' + this.h + '&a=' + this.a))
+          this.a = ''
+          alert('Something went Wrong! \nPlease repeat the payment process')
+        } else if (this.a === '3') {
+          this.$router.push(this.localizedRoute('/checkout/?h=' + this.h + '&a=' + this.a))
+          this.$store.commit('ui/setMicrocart', false)
+          this.a = ''
         }
       }
     }
@@ -89,6 +88,7 @@ export default {
     var url = new URL(url_string)
     this.a = url.searchParams.get('a')
     this.h = url.searchParams.get('h')
+    console.log('h:', this.h, 'c:', this.a)
     this.onAllDetails()
   }
 }

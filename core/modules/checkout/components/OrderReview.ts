@@ -17,14 +17,13 @@ export const OrderReview = {
       isFilled: false,
       orderReview: {
         terms: false
-      },
-      currentCartHash: 'abcdefghijk'
+      }
     }
   },
   computed: {
     ...mapGetters({
-      isVirtualCart: 'cart/isVirtualCart'
-      // currentCartHash: 'cart/getCurrentCartHash'
+      isVirtualCart: 'cart/isVirtualCart',
+      currentCartHash: 'cart/getCurrentCartHash'
     })
   },
   methods: {
@@ -49,9 +48,9 @@ export const OrderReview = {
     addLinks () {
       Logger.debug('THB: currentCartHash', this.currentCartHash)()
       return {
-        successurl: config.payone.hostUrlForRedirectBack + '/?h=' + this.currentCartHash + '&a=1',
-        errorurl: config.payone.hostUrlForRedirectBack + '/?h=' + this.currentCartHash + '&a=2',
-        backurl: config.payone.hostUrlForRedirectBack + '/?h=' + this.currentCartHash + '&a=3'
+        successurl: config.payone.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=1',
+        errorurl: config.payone.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=2',
+        backurl: config.payone.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=3'
       }
     },
 
@@ -68,7 +67,6 @@ export const OrderReview = {
       const body = {
         ...this.helperExtractRequestBody(paymentDetails),
         ...paymentDetails.paymentMethodAdditional,
-
         clearingtype: 'sb',
         onlinebanktransfertype: sbType,
         ...this.addLinks()
@@ -83,6 +81,7 @@ export const OrderReview = {
           if (res.status === 'REDIRECT') {
             paymentDetails.paymentMethodAdditional = {
               ...paymentDetails.paymentMethodAdditional,
+              ...body,
               ...res
             }
             this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
@@ -116,6 +115,7 @@ export const OrderReview = {
           if (res.status === 'REDIRECT') {
             paymentDetails.paymentMethodAdditional = {
               ...paymentDetails.paymentMethodAdditional,
+              ...body,
               ...res
             }
             this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
