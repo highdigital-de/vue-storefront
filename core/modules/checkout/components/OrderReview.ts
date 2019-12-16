@@ -2,7 +2,7 @@ import { mapGetters } from 'vuex'
 import i18n from '@vue-storefront/i18n'
 import { Logger } from '@vue-storefront/core/lib/logger'
 import config from 'config'
-
+import { calcItemsHmac } from '@vue-storefront/core/helpers'
 export const OrderReview = {
   name: 'OrderReview',
   props: {
@@ -23,7 +23,7 @@ export const OrderReview = {
   computed: {
     ...mapGetters({
       isVirtualCart: 'cart/isVirtualCart',
-      currentCartHash: 'cart/getCurrentCartHash'
+      currentCartHash: 'cart/getCartToken'
     })
   },
   methods: {
@@ -68,6 +68,7 @@ export const OrderReview = {
         ...this.helperExtractRequestBody(paymentDetails),
         ...paymentDetails.paymentMethodAdditional,
         clearingtype: 'sb',
+        payone_config_payment_method_id: '17',
         onlinebanktransfertype: sbType,
         ...this.addLinks()
       }
@@ -93,7 +94,7 @@ export const OrderReview = {
           // TODO Link To Successurl.. AND MANGE the link back
         },
         (err) => {
-          console.log('THB: executeWlt', err)
+          console.log('THB: executeSB', err)
         })
     },
     executeWlt (paymentDetails, wallettype) {
@@ -103,6 +104,7 @@ export const OrderReview = {
         ...body,
         ...paymentDetails.paymentMethodAdditional,
         clearingtype: 'wlt',
+        payone_config_payment_method_id: '24',
         wallettype: wallettype,
         ...this.addLinks()
       }
@@ -121,7 +123,7 @@ export const OrderReview = {
             this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
           }
           console.log(this.$store.state.checkout.paymentDetails)
-          // alert('Sie werden an den Zahlungsdienstleister weitergeleitet.')
+          alert('Sie werden an den Zahlungsdienstleister weitergeleitet.')
           window.location.replace(res.redirecturl);
 
           // TODO Link To Successurl.. AND MANGE the link back
@@ -138,6 +140,7 @@ export const OrderReview = {
         ...body,
         ...paymentDetails.paymentMethodAdditional,
         clearingtype: 'cc',
+        payone_config_payment_method_id: '10',
         cardtype: pMA.cardtype,
         cardexpiredate: pMA.cardexpiredate,
         pseudocardpan: pMA.pseudocardpan
@@ -149,7 +152,8 @@ export const OrderReview = {
         if (res.status === 'APPROVED') {
           this.placeOrderEmitEvent({
             ...paymentDetails.paymentMethodAdditional,
-            ...res
+            ...res,
+            ...body
           })
         } else {
           return 0
@@ -168,6 +172,7 @@ export const OrderReview = {
         ...body,
         ...paymentDetails.paymentMethodAdditional,
         clearingtype: 'elv',
+        payone_config_payment_method_id: '3',
         bankcountry: pMA.bankcountry,
         iban: pMA.iban,
         bic: pMA.bic
@@ -180,7 +185,9 @@ export const OrderReview = {
           // this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
           this.placeOrderEmitEvent({
             ...paymentDetails.paymentMethodAdditional,
-            ...res
+            ...res,
+            ...body
+
           })
         } else {
           return 0

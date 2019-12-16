@@ -152,8 +152,10 @@ export const Payment = {
       this.payment.paymentMethodAdditional =
         {
           amount: a,
-          currency: 'EUR'
+          currency: 'EUR',
+          shippingDetails: this.shippingDetails
         } // MAKE SURE WE START FROM ZERO DATA
+      console.log('paymentMethodAdditional', this.payment.paymentMethodAdditional)
       console.log(this.payment.paymentMethod);
       switch (this.payment.paymentMethod) {
         case 'payone_creditcard':
@@ -247,7 +249,7 @@ export const Payment = {
             console.log(result.result)
             console.log(result.result.answer)
             const res = result.result.answer
-            //const res = JSON.parse(result.result).answer
+            // const res = JSON.parse(result.result).answer
             // console.log(' res.json()2', decodeURIComponent(res))
             // this.$bus.$emit('modal-show', 'modal-signup')
             resolve(res)

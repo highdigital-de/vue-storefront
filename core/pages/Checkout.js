@@ -45,10 +45,11 @@ export default {
     ...mapGetters({
       isVirtualCart: 'cart/isVirtualCart',
       isThankYouPage: 'checkout/isThankYouPage',
+      
       personalDetailsStore: 'checkout/getPersonalDetails',
       paymentDetailsStore: 'checkout/getPaymentDetails',
       shippingDetailsStore: 'checkout/getShippingDetails',
-      currentCartHash: 'cart/getCurrentCartHash'})
+      currentCartHash: 'cart/getCartToken'})
   },
 
   beforeMount () {
@@ -137,6 +138,8 @@ export default {
     paymentDetailsStore () {
       this.canExecuteOrder()
       console.log(this.paymentDetailsStore)
+      console.log('saved shippingDetails', this.paymentDetailsStore.paymentMethodAdditional.shippingDetails)
+      console.log(this.shippingMethod)
     },
     shippingDetailsStore () {
       this.canExecuteOrder()
@@ -252,10 +255,13 @@ export default {
           isValid = false
         }
       }
-      if (process.env.NODE_ENV !== 'production') {
-        isValid = true // DELET THIS FOR PRODUCTION
-        console.log('THB: checkout: checkStocks(): IS OVERWRITTEN AlWAYS TRUE\n isProduction: ', process.env.NODE_ENV === 'production')
-      }
+      // if (process.env.NODE_ENV !== 'production') {
+      isValid = true // DELET THIS FOR PRODUCTION
+      console.log('THB: checkout: checkStocks(): IS OVERWRITTEN AlWAYS TRUE\n isProduction: ', process.env.NODE_ENV === 'production')
+      // } else {
+      //  console.log('THB: checkout: checkStocks():\n isProduction: ', process.env.NODE_ENV === 'production')
+      // }
+
       return isValid
     },
     activateHashSection () {
@@ -289,6 +295,7 @@ export default {
       return paymentMethod
     },
     prepareOrder () {
+      console.log('shipping_method_code', this.shippingMethod, this.shipping)
       this.order = {
         user_id: this.$store.state.user.current ? (this.$store.state.user.current.id ? this.$store.state.user.current.id.toString() : '') : '',
         cart_id: this.$store.state.cart.cartServerToken ? this.$store.state.cart.cartServerToken : '',
@@ -386,9 +393,17 @@ export default {
         this.payment = this.paymentDetailsStore
         this.shipping = this.shippingDetailsStore
 
+        this.shippingMethod.method_code = this.paymentDetailsStore.paymentMethodAdditional.shippingDetails.shippingMethod
+        this.shippingMethod.carrier_code = this.paymentDetailsStore.paymentMethodAdditional.shippingDetails.shippingCarrier
+
+        this.shipping.shippingMethod = this.paymentDetailsStore.paymentMethodAdditional.shippingDetails.shippingMethod
+        this.shipping.shippingCarrier = this.paymentDetailsStore.paymentMethodAdditional.shippingDetails.shippingCarrier
+
         console.log('personalDetails', JSON.stringify(this.personalDetails))
         console.log('payment', JSON.stringify(this.payment, this.shipping))
         console.log('shipping', JSON.stringify(this.shipping))
+        console.log('shipping', JSON.stringify(this.shippingMethod))
+
         this.onDoPlaceOrder(this.payment.paymentMethodAdditional)
       }
     }
