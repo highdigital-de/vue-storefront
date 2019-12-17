@@ -1,5 +1,5 @@
 <template>
-  <div name="payone-test-container" id="payonesb">
+  <div name="payone-test-container" id="payone_online_bank_transfer_sofortueberweisung">
     <label for="bankcountry">Banksitz</label>
     <select id="bankcountry" v-model="bankcountryselect" @change="onSelectChange($event)">
       <!--option value="AF">

@@ -415,8 +415,7 @@ export default {
 
     console.log('THB: Pathvariables are: ', this.a, ' and ', this.h)
     if (this.a !== '') {
-      this.a = this.a;
-      this.canExecuteOrder()
+      this.canExecuteOrder() // If all Parameter already loaded. execute order without delay
     }
   }
 }

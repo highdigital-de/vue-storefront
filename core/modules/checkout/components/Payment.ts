@@ -140,9 +140,9 @@ export const Payment = {
       if (a === -100) return 0 // do nothing when amount is not sufficient.
       this.payment.paymentMethodAdditional =
         {
-          "amount": a,
-          "currency": 'EUR',
-          "shippingDetails": this.shippingDetails
+          'amount': a,
+          'currency': 'EUR',
+          'shippingDetails': this.shippingDetails
         } // MAKE SURE WE START FROM ZERO DATA
       console.log(this.payment.paymentMethod);
       switch (this.payment.paymentMethod) {

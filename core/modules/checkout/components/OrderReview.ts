@@ -15,7 +15,7 @@ export const OrderReview = {
       config.payone.paymentMethodId.paypal,
       config.payone.paymentMethodId.cc,
       config.payone.paymentMethodId.sepa,
-      config.payone.paymentMethodId.sofor)
+      config.payone.paymentMethodId.sofort)
     return {
       preauthApi: config.api.url + '/api/payone/preauthorization',
       pmiPaypal: config.payone.paymentMethodId.paypal,
