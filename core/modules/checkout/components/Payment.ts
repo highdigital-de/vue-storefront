@@ -1,13 +1,7 @@
 import { mapState, mapGetters } from 'vuex';
-import request from 'request';
 import RootState from '@vue-storefront/core/types/RootState';
 import toString from 'lodash-es/toString';
-import { TaskQueue } from '@vue-storefront/core/lib/sync';
-// import { Task } from '@vue-storefront/core/lib/sync/types/Task';
 import config from 'config'
-
-import { Logger } from '@vue-storefront/core/lib/logger';
-import { getFragmentQueryDocument } from 'apollo-utilities';
 
 const Countries = require('@vue-storefront/i18n/resource/countries.json');
 
@@ -146,9 +140,9 @@ export const Payment = {
       if (a === -100) return 0 // do nothing when amount is not sufficient.
       this.payment.paymentMethodAdditional =
         {
-          amount: a,
-          currency: 'EUR',
-          shippingDetails: this.shippingDetails
+          "amount": a,
+          "currency": 'EUR',
+          "shippingDetails": this.shippingDetails
         } // MAKE SURE WE START FROM ZERO DATA
       console.log(this.payment.paymentMethod);
       switch (this.payment.paymentMethod) {
@@ -163,7 +157,6 @@ export const Payment = {
           break;
         case 'payone_online_bank_transfer_sofortueberweisung':
           this.excecuteSb()
-          this.sendDataToCheckoutEmitEvent()
           break;
       }
     },
@@ -206,10 +199,14 @@ export const Payment = {
     },
     excecuteSb () {
       const sepaData = window['checkSbComplete']();
-
-      this.payment.paymentMethodAdditional = {
-        ...this.payment.paymentMethodAdditional,
-        ...sepaData
+      if (sepaData.complete === true) {
+        this.payment.paymentMethodAdditional = {
+          ...this.payment.paymentMethodAdditional,
+          ...sepaData
+        }
+        this.sendDataToCheckoutEmitEvent()
+      } else {
+        alert('Eingabe unzulänglich.');
       }
     },
     sendDataToCheckoutEmitEvent () {
