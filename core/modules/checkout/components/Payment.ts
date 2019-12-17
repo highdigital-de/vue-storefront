@@ -124,16 +124,11 @@ export const Payment = {
     confirmSepaMandate (res) {
       if (confirm('SPEA LASTSCHRIFT MANDAT' + decodeURIComponent(res))) {
         console.log('OK')
-        // AT PLACE ORDER DO preauthorization (server side)
         return true;
       } else {
         console.log('BACK TO PAYMENT')
-        // User did
         return false;
       }
-    },
-    isFloat (n) {
-      return Number(n) === n && n % 1 !== 0;
     },
     getAmount () {
       const totals = this.$store.getters['cart/getTotals']
@@ -155,7 +150,6 @@ export const Payment = {
           currency: 'EUR',
           shippingDetails: this.shippingDetails
         } // MAKE SURE WE START FROM ZERO DATA
-      console.log('paymentMethodAdditional', this.payment.paymentMethodAdditional)
       console.log(this.payment.paymentMethod);
       switch (this.payment.paymentMethod) {
         case 'payone_creditcard':
@@ -246,13 +240,8 @@ export const Payment = {
           })
         }).then(res => {
           res.json().then(result => {
-            console.log(result.result)
-            console.log(result.result.answer)
-            const res = result.result.answer
-            // const res = JSON.parse(result.result).answer
-            // console.log(' res.json()2', decodeURIComponent(res))
-            // this.$bus.$emit('modal-show', 'modal-signup')
-            resolve(res)
+            console.log('THB: payment managemandate res', result.result.answer)
+            resolve(result.result.answer)
           })
         }).catch(err => {
           console.log('THB: payment managemandate err', err)

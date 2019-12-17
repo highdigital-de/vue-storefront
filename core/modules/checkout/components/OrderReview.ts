@@ -2,7 +2,6 @@ import { mapGetters } from 'vuex'
 import i18n from '@vue-storefront/i18n'
 import { Logger } from '@vue-storefront/core/lib/logger'
 import config from 'config'
-import { calcItemsHmac } from '@vue-storefront/core/helpers'
 export const OrderReview = {
   name: 'OrderReview',
   props: {
@@ -12,8 +11,17 @@ export const OrderReview = {
     }
   },
   data () {
+    console.log('config.payone:',
+      config.payone.paymentMethodId.paypal,
+      config.payone.paymentMethodId.cc,
+      config.payone.paymentMethodId.sepa,
+      config.payone.paymentMethodId.sofor)
     return {
       preauthApi: config.api.url + '/api/payone/preauthorization',
+      pmiPaypal: config.payone.paymentMethodId.paypal,
+      pmiCC: config.payone.paymentMethodId.cc,
+      pmiSepa: config.payone.paymentMethodId.sepa,
+      pmiSofort: config.payone.paymentMethodId.sofort,
       isFilled: false,
       orderReview: {
         terms: false
@@ -45,6 +53,86 @@ export const OrderReview = {
           break;
       }
     },
+    executeSb (paymentDetails, sbType) {
+      console.log(sbType)
+      const body = {
+        ...this.helperExtractRequestBody(paymentDetails),
+        ...paymentDetails.paymentMethodAdditional,
+        clearingtype: 'sb',
+        payone_config_payment_method_id: this.pmiSofort,
+        onlinebanktransfertype: sbType,
+        ...this.addLinks()
+      }
+      this.callPreauthApi(body, 'onlineBanking: ' + sbType, paymentDetails)
+    },
+    executeWlt (paymentDetails, wallettype) {
+      console.log(wallettype)
+      let body = {
+        ...this.helperExtractRequestBody(paymentDetails),
+        ...paymentDetails.paymentMethodAdditional,
+        clearingtype: 'wlt',
+        payone_config_payment_method_id: this.pmiPaypal,
+        wallettype: wallettype,
+        ...this.addLinks()
+      }
+      this.callPreauthApi(body, 'eWallet: ' + wallettype, paymentDetails)
+    },
+    executeCC (paymentDetails) {
+      const pMA = paymentDetails.paymentMethodAdditional;
+      let body = {
+        ...this.helperExtractRequestBody(paymentDetails),
+        ...pMA,
+        clearingtype: 'cc',
+        payone_config_payment_method_id: this.pmiCC
+        //        cardtype: pMA.cardtype,
+        //        cardexpiredate: pMA.cardexpiredate,
+        //       pseudocardpan: pMA.pseudocardpan
+      }
+      this.callPreauthApi(body, 'CreditCard', paymentDetails)
+    },
+    executeSepa (paymentDetails) {
+      if (!paymentDetails || !paymentDetails.paymentMethodAdditional) throw new Error('PaymentDetails undefined')
+
+      const pMA = paymentDetails.paymentMethodAdditional;
+      let body = {
+        ...this.helperExtractRequestBody(paymentDetails),
+        ...pMA,
+        clearingtype: 'elv',
+        payone_config_payment_method_id: this.pmiSepa
+        //        bankcountry: pMA.bankcountry,
+        //        iban: pMA.iban,
+        //        bic: pMA.bic
+      }
+      this.callPreauthApi(body, 'SEPA', paymentDetails)
+    },
+    callPreauthApi (body, paymentMethod, paymentDetails) {
+      this.callApi(this.preauthApi, body).then((res) => {
+        res = this.helperParseResponse(res.result.answer)
+        console.log('THB: exectuing ', paymentMethod, 'Result: ', res)
+
+        if (res.status === 'APPROVED') {
+          this.placeOrderEmitEvent({
+            ...res,
+            ...body
+          })
+        } else if (res.status === 'REDIRECT') {
+          paymentDetails.paymentMethodAdditional = {
+            ...paymentDetails.paymentMethodAdditional,
+            ...body,
+            ...res
+          }
+          this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
+          // console.log(this.$store.state.checkout.paymentDetails)
+          alert('Sie werden an den Zahlungsdienstleister weitergeleitet.')
+          window.location.replace(res.redirecturl);
+        } else {
+          return 0
+        }
+      },
+      (err) => {
+        console.log('THB: exectuing ', paymentMethod, 'Error: ', err)
+      })
+    },
     addLinks () {
       Logger.debug('THB: currentCartHash', this.currentCartHash)()
       return {
@@ -61,142 +149,6 @@ export const OrderReview = {
         this.$bus.$emit('checkout-do-placeOrder', paymentMethodAdditional)
         // THANK YOU PAGE. onAfterPlaceOrder...
       }
-    },
-    executeSb (paymentDetails, sbType) {
-      console.log(sbType)
-      const body = {
-        ...this.helperExtractRequestBody(paymentDetails),
-        ...paymentDetails.paymentMethodAdditional,
-        clearingtype: 'sb',
-        payone_config_payment_method_id: '17',
-        onlinebanktransfertype: sbType,
-        ...this.addLinks()
-      }
-      console.log('THB: SB; BODY:', body)
-      // Preauth via SF-API
-      this.callApi(this.preauthApi, body).then(
-        (res) => {
-          console.log(res)
-          res = this.helperParseResponse(res.result.answer)
-          console.log('THB: executeSB', res)
-          if (res.status === 'REDIRECT') {
-            paymentDetails.paymentMethodAdditional = {
-              ...paymentDetails.paymentMethodAdditional,
-              ...body,
-              ...res
-            }
-            this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
-          }
-          console.log(this.$store.state.checkout.paymentDetails)
-          // alert('Sie werden an den Zahlungsdienstleister weitergeleitet.')
-          window.location.replace(res.redirecturl);
-
-          // TODO Link To Successurl.. AND MANGE the link back
-        },
-        (err) => {
-          console.log('THB: executeSB', err)
-        })
-    },
-    executeWlt (paymentDetails, wallettype) {
-      let body = this.helperExtractRequestBody(paymentDetails);
-      console.log(wallettype)
-      body = {
-        ...body,
-        ...paymentDetails.paymentMethodAdditional,
-        clearingtype: 'wlt',
-        payone_config_payment_method_id: '24',
-        wallettype: wallettype,
-        ...this.addLinks()
-      }
-      // Preauth via SF-API
-      this.callApi(this.preauthApi, body).then(
-        (res) => {
-          console.log(res)
-          res = this.helperParseResponse(res.result.answer)
-          console.log('THB: executeWlt', res)
-          if (res.status === 'REDIRECT') {
-            paymentDetails.paymentMethodAdditional = {
-              ...paymentDetails.paymentMethodAdditional,
-              ...body,
-              ...res
-            }
-            this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
-          }
-          console.log(this.$store.state.checkout.paymentDetails)
-          alert('Sie werden an den Zahlungsdienstleister weitergeleitet.')
-          window.location.replace(res.redirecturl);
-
-          // TODO Link To Successurl.. AND MANGE the link back
-        },
-        (err) => {
-          console.log('THB: executeWlt', err)
-        })
-    },
-    executeCC (paymentDetails) {
-      // preapare Body for Preauth Creditcard
-      let body = this.helperExtractRequestBody(paymentDetails);
-      const pMA = paymentDetails.paymentMethodAdditional;
-      body = {
-        ...body,
-        ...paymentDetails.paymentMethodAdditional,
-        clearingtype: 'cc',
-        payone_config_payment_method_id: '10',
-        cardtype: pMA.cardtype,
-        cardexpiredate: pMA.cardexpiredate,
-        pseudocardpan: pMA.pseudocardpan
-      }
-      // Preauth via SF-API
-      this.callApi(this.preauthApi, body).then((res) => {
-        res = this.helperParseResponse(res.result.answer)
-        console.log('THB: executeCC', res)
-        if (res.status === 'APPROVED') {
-          this.placeOrderEmitEvent({
-            ...paymentDetails.paymentMethodAdditional,
-            ...res,
-            ...body
-          })
-        } else {
-          return 0
-        }
-      },
-      (err) => {
-        console.log('THB: executeCC', err)
-      })
-    },
-    executeSepa (paymentDetails) {
-      if (!paymentDetails || !paymentDetails.paymentMethodAdditional) throw new Error('PaymentDetails undefined')
-
-      let body = this.helperExtractRequestBody(paymentDetails);
-      const pMA = paymentDetails.paymentMethodAdditional;
-      body = {
-        ...body,
-        ...paymentDetails.paymentMethodAdditional,
-        clearingtype: 'elv',
-        payone_config_payment_method_id: '3',
-        bankcountry: pMA.bankcountry,
-        iban: pMA.iban,
-        bic: pMA.bic
-      }
-      // this.callApiPreauthorization(paymentDetails).then(
-      this.callApi(this.preauthApi, body).then((res) => {
-        res = this.helperParseResponse(res.result.answer)
-        console.log('THB: executeSepa', res)
-        if (res.status === 'APPROVED') {
-          // this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
-          this.placeOrderEmitEvent({
-            ...paymentDetails.paymentMethodAdditional,
-            ...res,
-            ...body
-
-          })
-        } else {
-          return 0
-        }
-      },
-      (err) => {
-        console.log('THB:', err)
-      }
-      )
     },
     /*
       Expected input:
@@ -283,14 +235,6 @@ export const OrderReview = {
         this.$bus.$emit('notification-progress-stop')
         Logger.error(err, 'checkout')()
       })
-    }
-  },
-  mounted () {
-    const pdetails = this.$store.state.checkout.paymentDetails
-    const pStatus = pdetails.paymentMethodAdditional.paymentStatus
-    console.log('THB: pStatus: ', pStatus, pdetails)
-    if (pStatus && pStatus === 'successfull') {
-      this.placeOrderEmitEvent(pdetails.paymentMethodAdditional)
     }
   }
 }

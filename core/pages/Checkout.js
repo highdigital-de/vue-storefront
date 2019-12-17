@@ -45,7 +45,7 @@ export default {
     ...mapGetters({
       isVirtualCart: 'cart/isVirtualCart',
       isThankYouPage: 'checkout/isThankYouPage',
-      
+
       personalDetailsStore: 'checkout/getPersonalDetails',
       paymentDetailsStore: 'checkout/getPaymentDetails',
       shippingDetailsStore: 'checkout/getShippingDetails',
@@ -133,21 +133,15 @@ export default {
     'OnlineOnly': 'onNetworkStatusCheck',
     personalDetailsStore () {
       this.canExecuteOrder()
-      console.log(this.personalDetailsStore)
     },
     paymentDetailsStore () {
       this.canExecuteOrder()
-      console.log(this.paymentDetailsStore)
-      console.log('saved shippingDetails', this.paymentDetailsStore.paymentMethodAdditional.shippingDetails)
-      console.log(this.shippingMethod)
     },
     shippingDetailsStore () {
       this.canExecuteOrder()
-      console.log(this.shippingDetailsStore)
     },
     currentCartHash () {
       this.canExecuteOrder()
-      console.log(this.currentCartHash)
     }
   },
   methods: {
@@ -255,13 +249,8 @@ export default {
           isValid = false
         }
       }
-      // if (process.env.NODE_ENV !== 'production') {
       isValid = true // DELET THIS FOR PRODUCTION
-      console.log('THB: checkout: checkStocks(): IS OVERWRITTEN AlWAYS TRUE\n isProduction: ', process.env.NODE_ENV === 'production')
-      // } else {
-      //  console.log('THB: checkout: checkStocks():\n isProduction: ', process.env.NODE_ENV === 'production')
-      // }
-
+      console.log('THB: checkout: checkStocks(): IS AlWAYS TRUE\n Delete if isProduction: ', process.env.NODE_ENV === 'production')
       return isValid
     },
     activateHashSection () {
@@ -295,7 +284,6 @@ export default {
       return paymentMethod
     },
     prepareOrder () {
-      console.log('shipping_method_code', this.shippingMethod, this.shipping)
       this.order = {
         user_id: this.$store.state.user.current ? (this.$store.state.user.current.id ? this.$store.state.user.current.id.toString() : '') : '',
         cart_id: this.$store.state.cart.cartServerToken ? this.$store.state.cart.cartServerToken : '',
@@ -344,8 +332,9 @@ export default {
     placeOrder () {
       this.checkConnection({ online: typeof navigator !== 'undefined' ? navigator.onLine : true })
       if (this.checkStocks()) {
-        console.log('THB: prepareOrder()', JSON.stringify(this.prepareOrder()))
-        this.$store.dispatch('checkout/placeOrder', { order: this.prepareOrder() })
+        let myOrder = this.prepareOrder()
+        console.log('THB: prepareOrder()', JSON.stringify(myOrder))
+        this.$store.dispatch('checkout/placeOrder', { order: myOrder })
       } else {
         this.notifyNotAvailable()
       }
@@ -372,9 +361,8 @@ export default {
       }
     },
     canExecuteOrder () {
-      console.log('canExe: c', this.currentCartHash)
-      console.log('canExe: h', this.h)
-      console.log('canExe: b', this.h === this.currentCartHash)
+      console.log('Checking if all parameters are avaialbel to execute Order')
+      console.log(this.a, this.h, this.currentCartHash, this.paymentDetailsStore.emailAddress, this.shippingDetailsStore.city, this.personalDetailsStore.city)
       if (
         this.paymentDetailsStore.emailAddress !== '' &&
         this.shippingDetailsStore.city !== '' &&
@@ -382,10 +370,7 @@ export default {
         this.a === '1' &&
         this.h === this.currentCartHash
       ) {
-        console.log('canExecuteOrder c', this.currentCartHash)
-        console.log('canExecuteOrder h', this.h)
-        console.log('canExecuteOrder b', this.h === this.currentCartHash)
-
+        console.log('All parameters are in place, trying to place Order now..')
         this.a = '' // Excute Order only one time
         this.h = ''
 
@@ -402,7 +387,7 @@ export default {
         console.log('personalDetails', JSON.stringify(this.personalDetails))
         console.log('payment', JSON.stringify(this.payment, this.shipping))
         console.log('shipping', JSON.stringify(this.shipping))
-        console.log('shipping', JSON.stringify(this.shippingMethod))
+        console.log('shippingMethod', JSON.stringify(this.shippingMethod))
 
         this.onDoPlaceOrder(this.payment.paymentMethodAdditional)
       }

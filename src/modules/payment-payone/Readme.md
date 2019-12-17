@@ -26,12 +26,15 @@ The following list describes which files needed to be changed in order to achiev
   - ```
     { 
       ..
-      "payone": {
-        // not used: "redirectUrl": "http://f85f056d.ngrok.io/",
-        "successurl": "http://f85f056d.ngrok.io/?a=1",
-        "errorurl": "http://f85f056d.ngrok.io/?a=2",
-        "backurl": "http://f85f056d.ngrok.io/?a=3"
+    "payone": {
+      "hostUrlForRedirectBack": "http://7ba2de03.ngrok.io/",
+      "paymentMethodId": {
+        "paypal": "24",
+        "sofort":"17",
+        "cc":"10",
+        "sepa": "3"  
       }
+    }
     }
     ```
 
