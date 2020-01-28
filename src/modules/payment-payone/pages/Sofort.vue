@@ -1,7 +1,8 @@
 <template>
   <div name="payone-test-container" id="payone_online_bank_transfer_sofortueberweisung" class="payment-form-container">
-    <label for="bankcountry">Banksitz</label>
-    <select id="bankcountry" v-model="bankcountryselect" @change="onSelectChange($event)">
+    <div class="select-row">
+      <div class="select-container">
+    <select id="bankcountrySofort" v-model="bankcountryselect" @change="onSelectChange($event)">
       <!--option value="AF">
         Afghanistan
       </option>
@@ -750,12 +751,21 @@
         Zimbabwe
       </option-->
     </select>
-
-    <label for="iban">Iban:</label>
-    <input id="iban" type="text" value="" v-model="iban">
-    <br>
-    <label for="bic">Bic:</label>
-    <input id="bic" type="text" value="" v-model="bic">
+        <label for="bankcountrySofort">Banksitz</label>
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="input-container">
+        <input id="ibanSofort" type="text" value="" v-model="iban" :class="{empty: iban === ''}">
+        <label for="ibanSofort">Iban</label>
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="input-container">
+        <input id="bicSofort" type="text" value="" v-model="bic" :class="{empty: bic === ''}">
+        <label for="bicSofort">Bic</label>
+      </div>
+    </div>
   </div>
 </template>
 

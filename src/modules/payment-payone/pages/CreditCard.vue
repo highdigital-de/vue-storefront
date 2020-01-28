@@ -21,9 +21,11 @@
           name="truncatedcardpan"
           id="truncatedcardpan"
         >
-        <label for="cardtypeInput">Card type</label>
+        <div class="select-row">
+          <div class="select-container">
+
         <select
-          id="cardtype"
+          id="cardtypeCC"
           @change="onSelectChange($event)"
         >
           <option value="V">
@@ -36,7 +38,9 @@
             Amex
           </option>
         </select>
-        <br>
+            <label for="cardtypeCC">Card type</label>
+          </div>
+        </div>
         <label for="cardpanInput">Cardpan:</label>
         <span
           class="inputIframe"
@@ -57,23 +61,30 @@
           <span id="cardexpiremonth" />
           <span id="cardexpireyear" />
         </span>
-        <br>
-        <label for="firstname1">Firstname:</label>
-        <input
-          id="firstname1"
-          type="text"
-          value
-          v-model.trim="firstname"
-        >
-        <br>
-        <label for="lastname1">Lastname:</label>
-        <input
-          id="lastname1"
-          type="text"
-          value
-          v-model.trim="lastname"
-        >
-        <br>
+        <div class="input-row">
+          <div class="input-container">
+            <input
+              id="firstnameCC"
+              type="text"
+              value
+              v-model.trim="firstname"
+              :class="{empty: firstname === ''}"
+            >
+            <label for="firstnameCC">Firstname</label>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-container">
+            <input
+              id="lastnameCC"
+              type="text"
+              value
+              v-model.trim="lastname"
+              :class="{empty: lastname === ''}"
+            >
+            <label for="lastnameCC">Lastname</label>
+          </div>
+        </div>
         <div id="errorOutput" />
         <!---input
           class="submit"
@@ -228,36 +239,13 @@ body {
   color: #000;
   font: 0.9em "Helvetica";
 }
-fieldset {
-  padding: 1em;
-  border: 1px solid #000;
-  width: 300px;
-  margin: 10px;
-}
-label {
-  margin-right: 10px;
-  float: left;
-  width: 80px;
-  padding-top: 0.3em;
-  text-align: right;
-}
-input,
-select {
-  font-size: 1em;
-  border: 1px solid #000;
-  padding: 0.1em;
-}
-select {
-  margin-right: 10px;
-}
 input,
 .inputIframe,
 select {
   display: block;
-  margin-bottom: 10px;
 }
 input {
-  width: 175px;
+
 }
 #paymentsubmit {
   float: right;

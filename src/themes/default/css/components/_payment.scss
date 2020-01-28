@@ -9,7 +9,7 @@ $color-hover: color(tertiary, $colors-background);
 
 .input-row{position: relative;     min-height: 4.5rem; margin-bottom: 10px;}
 .input-container{position: relative;   }
-
+.payment-form-container fieldset{border: none !important;}
 .payment-form-container{    padding-left: 35px;}
 .payment-form-container input[type=text] {
 

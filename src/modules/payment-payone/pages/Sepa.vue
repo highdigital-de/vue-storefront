@@ -2,8 +2,8 @@
   <div name="payone-test-container" id="payone_debit_payment" class="payment-form-container">
     <div class="select-row">
       <div class="select-container">
-      <select id="bankcountrySepa" v-model="bankcountryselect" @change="onSelectChange($event)">
-        <!--option value="AF">
+        <select id="bankcountrySepa" v-model="bankcountryselect" @change="onSelectChange($event)">
+          <!--option value="AF">
           Afghanistan
         </option>
         <option value="AX">
@@ -45,10 +45,10 @@
         <option value="AU">
           Australia
         </option-->
-        <option value="AT">
-          Austria
-        </option>
-        <!--option value="AZ">
+          <option value="AT">
+            Austria
+          </option>
+          <!--option value="AZ">
           Azerbaijan
         </option>
         <option value="BS">
@@ -249,9 +249,9 @@
         <option value="GE">
           Georgia
         </option-->
-        <option value="DE">
-          Germany
-        </option>
+          <option value="DE">
+            Germany
+          </option>
         <!--option value="GH">
           Ghana
         </option>
@@ -750,7 +750,7 @@
         <option value="ZW">
           Zimbabwe
         </option-->
-      </select>
+        </select>
         <label for="bankcountrySepa">Banksitz</label>
       </div>
     </div>
