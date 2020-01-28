@@ -239,7 +239,7 @@
               {{ $t('Payment method') }}
             </h4>
           </div>
-          <div v-for="(method, index) in paymentMethods" :key="index" class="col-md-6" v-show="isPaymentAllowed(method)">
+          <div v-for="(method, index) in paymentMethods" :key="index" class="col-md-6" v-if="isPaymentAllowed(method)">
             <label class="radioStyled"> {{ method.title ? method.title : method.name }}
               <input
                 type="radio"
@@ -461,6 +461,9 @@ export default {
         }
       }
     }
+  },
+  created () {
+    console.log('current Payment', this.payment.paymentMethod)
   }
 }
 </script>
