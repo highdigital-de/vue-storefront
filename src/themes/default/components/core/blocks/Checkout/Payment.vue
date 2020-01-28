@@ -239,7 +239,7 @@
               {{ $t('Payment method') }}
             </h4>
           </div>
-          <div v-for="(method, index) in paymentMethods" :key="index" class="col-md-6">
+          <div v-for="(method, index) in paymentMethods" :key="index" class="col-md-6" v-show="isPaymentAllowed(method)">
             <label class="radioStyled"> {{ method.title ? method.title : method.name }}
               <input
                 type="radio"
@@ -325,6 +325,7 @@ import BaseInput from 'theme/components/core/blocks/Form/BaseInput'
 import BaseSelect from 'theme/components/core/blocks/Form/BaseSelect'
 import ButtonFull from 'theme/components/theme/ButtonFull'
 import Tooltip from 'theme/components/core/Tooltip'
+import config from 'config'
 
 export default {
   components: {
@@ -343,6 +344,12 @@ export default {
           label: item.name
         }
       })
+    }
+  },
+  props: {
+    isAboCart: {
+      type: Boolean,
+      default: false
     }
   },
   validations () {
@@ -426,6 +433,31 @@ export default {
           paymentMethod: {
             required
           }
+        }
+      }
+    }
+  },
+  methods: {
+    isPaymentAllowed (method) {
+      if (this.isAboCart) {
+        let isPayonePayment = this.isPayonePayment(method);
+
+        if (isPayonePayment) {
+          return this.isAboPayment(method);
+        }
+        return false;
+      }
+      return true;
+    },
+    isPayonePayment (method) {
+      return (method.code).includes('payone')
+    },
+    isAboPayment (method) {
+      for (let [key, paymentMethod] of Object.entries(config.payone.paymentMethods)) {
+        let shippingMethodCode = paymentMethod.code;
+        let isAboPayment = paymentMethod.isAboPayment;
+        if (isAboPayment && shippingMethodCode === method.code) {
+          return true;
         }
       }
     }
