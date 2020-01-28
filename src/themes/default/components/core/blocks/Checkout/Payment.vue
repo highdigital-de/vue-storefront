@@ -239,7 +239,7 @@
               {{ $t('Payment method') }}
             </h4>
           </div>
-          <div v-for="(method, index) in paymentMethods" :key="index" class="col-md-6" v-if="isPaymentAllowed(method)">
+          <div v-for="(method, index) in paymentMethods" :key="index" class="col-md-12" v-if="isPaymentAllowed(method)">
             <label class="radioStyled"> {{ method.title ? method.title : method.name }}
               <input
                 type="radio"
@@ -250,7 +250,7 @@
               >
               <span class="checkmark" />
             </label>
-            <div name="payone-test-container" :id="method.code" />
+            <div class="payment-form-container" name="payone-test-container" :id="method.code" />
             <!-- injection point for Payment-module components via id -->
             <!-- reset point on 'checkout-payment-method-changed' in payment.ts via name -->
           </div>

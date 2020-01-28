@@ -2,6 +2,7 @@
   <div
     name="payone-test-container"
     id="payone_creditcard"
+    class="payment-form-container"
   >
     <form
       ref="form"

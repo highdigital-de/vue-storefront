@@ -4,6 +4,7 @@
   <div
     name="payone-test-container"
     id="payone_wallet_paypal_express"
+    class="payment-form-container"
   >
     <p>You are going to pay for this order with PayPal.</p>
   </div>
