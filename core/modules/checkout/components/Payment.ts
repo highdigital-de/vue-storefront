@@ -39,10 +39,10 @@ export const Payment = {
       !this.payment.paymentMethod ||
       this.notInMethods(this.payment.paymentMethod)
     ) {
-      this.payment.paymentMethod =
-        this.paymentMethods.length > 0
+      this.payment.paymentMethod = '';
+        /*this.paymentMethods.length > 0
           ? this.paymentMethods[0].code
-          : 'cashondelivery';
+          : 'cashondelivery';*/
     }
   },
   mounted () {
@@ -281,7 +281,7 @@ export const Payment = {
                 zipCode: addresses[i].postcode,
                 taxId: addresses[i].vat_id,
                 phoneNumber: addresses[i].telephone,
-                paymentMethod: this.paymentMethods[0].code
+                paymentMethod: '',//this.paymentMethods[0].code
               };
               this.generateInvoice = true;
               this.sendToBillingAddress = true;
@@ -304,8 +304,8 @@ export const Payment = {
           zipCode: '',
           phoneNumber: '',
           taxId: '',
-          paymentMethod:
-            this.paymentMethods.length > 0 ? this.paymentMethods[0].code : ''
+          paymentMethod: ''
+            //this.paymentMethods.length > 0 ? this.paymentMethods[0].code : ''
         };
       }
     },
@@ -330,8 +330,8 @@ export const Payment = {
         apartmentNumber: this.shippingDetails.apartmentNumber,
         zipCode: this.shippingDetails.zipCode,
         phoneNumber: this.shippingDetails.phoneNumber,
-        paymentMethod:
-          this.paymentMethods.length > 0 ? this.paymentMethods[0].code : ''
+        paymentMethod:''
+          //this.paymentMethods.length > 0 ? this.paymentMethods[0].code : ''
       };
     },
     useBillingAddress () {
@@ -354,10 +354,10 @@ export const Payment = {
               zipCode: addresses[i].postcode,
               taxId: addresses[i].vat_id,
               phoneNumber: addresses[i].telephone,
-              paymentMethod:
-                this.paymentMethods.length > 0
+              paymentMethod:''
+                /*this.paymentMethods.length > 0
                   ? this.paymentMethods[0].code
-                  : ''
+                  : ''*/
             };
             this.generateInvoice = true;
           }
