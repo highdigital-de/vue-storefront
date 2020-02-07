@@ -11,17 +11,16 @@ export const OrderReview = {
     }
   },
   data () {
-    console.log('config.payone:',
-      config.payone.paymentMethodId.paypal,
-      config.payone.paymentMethodId.cc,
-      config.payone.paymentMethodId.sepa,
-      config.payone.paymentMethodId.sofort)
+      config.paymentMethods.paypal.id,
+      config.paymentMethods.cc.id,
+      config.paymentMethods.sepa.id,
+      config.paymentMethods.sofort.id
     return {
       preauthApi: config.api.url + '/api/payone/preauthorization',
-      pmiPaypal: config.payone.paymentMethodId.paypal,
-      pmiCC: config.payone.paymentMethodId.cc,
-      pmiSepa: config.payone.paymentMethodId.sepa,
-      pmiSofort: config.payone.paymentMethodId.sofort,
+      pmiPaypal: config.paymentMethods.paypal.id,
+      pmiCC: config.paymentMethods.cc.id,
+      pmiSepa: config.paymentMethods.sepa.id,
+      pmiSofort: config.paymentMethods.sofort.id,
       isFilled: false,
       orderReview: {
         terms: false
@@ -84,9 +83,6 @@ export const OrderReview = {
         ...pMA,
         clearingtype: 'cc',
         payone_config_payment_method_id: this.pmiCC
-        //        cardtype: pMA.cardtype,
-        //        cardexpiredate: pMA.cardexpiredate,
-        //       pseudocardpan: pMA.pseudocardpan
       }
       this.callPreauthApi(body, 'CreditCard', paymentDetails)
     },
@@ -99,9 +95,7 @@ export const OrderReview = {
         ...pMA,
         clearingtype: 'elv',
         payone_config_payment_method_id: this.pmiSepa
-        //        bankcountry: pMA.bankcountry,
-        //        iban: pMA.iban,
-        //        bic: pMA.bic
+
       }
       this.callPreauthApi(body, 'SEPA', paymentDetails)
     },
