@@ -26,13 +26,27 @@ The following list describes which files needed to be changed in order to achiev
   - ```
     { 
       ..
-    "payone": {
-      "hostUrlForRedirectBack": "http://7ba2de03.ngrok.io/",
-      "paymentMethodId": {
-        "paypal": "24",
-        "sofort":"17",
-        "cc":"10",
-        "sepa": "3"  
+   "paymentMethods": {
+      "hostUrlForRedirectBack": "https://vue.c-1107.maxcluster.net/",
+      "paypal": {
+        "id": "28",
+        "isAboPayment": false,
+        "code": "payone_wallet_paypal_express"
+      },
+      "sofort": {
+        "id": "33",
+        "isAboPayment": false,
+        "code":"payone_online_bank_transfer_sofortueberweisung"
+      },
+      "cc": {
+        "id": "6",
+        "isAboPayment": true,
+        "code": "payone_creditcard"
+      },
+      "sepa": {
+        "id": "38",
+        "isAboPayment": true,
+        "code": "payone_debit_payment"
       }
     }
     }
