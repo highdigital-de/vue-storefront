@@ -33,8 +33,7 @@ export function afterRegistration ({ Vue, config, store, isServer }) {
   // Just make sure to adjust the PaymentMethod Code and it can be set in the backend which payment-methods are available
   const paymentMethodConfigCC = {
     title: 'PayOne - CreditCard',
-    payone_config_payment_method_id: '10',
-    code: 'payone_creditcard',
+    code: config.paymentMethods.cc.code,
     cost: 0,
     costInclTax: 0, // where do i get the costs from?
     default: true,
@@ -43,8 +42,7 @@ export function afterRegistration ({ Vue, config, store, isServer }) {
   };
   const paymentMethodConfigSepa = {
     title: 'PayOne - Sepa-Lastschrift',
-    payone_config_payment_method_id: '3',
-    code: 'payone_debit_payment',
+    code: config.paymentMethods.sepa.code,
     cost: 0,
     costInclTax: 0, // where do i get the costs from?
     default: true,
@@ -53,8 +51,7 @@ export function afterRegistration ({ Vue, config, store, isServer }) {
   };
   const paymentMethodConfigPayPal = {
     title: 'PayOne - PayPal',
-    payone_config_payment_method_id: '24',
-    code: 'payone_wallet_paypal_express',
+    code: config.paymentMethods.paypal.code,
     cost: 0,
     costInclTax: 0, // where do i get the costs from?
     default: true,
@@ -63,15 +60,13 @@ export function afterRegistration ({ Vue, config, store, isServer }) {
   };
   const paymentMethodConfigSofort = {
     title: 'PayOne - Sofort',
-    payone_config_payment_method_id: '17',
-    code: 'payone_online_bank_transfer_sofortueberweisung',
+    code: config.paymentMethods.sofort.code,
     cost: 0,
     costInclTax: 0, // where do i get the costs from?
     default: true,
     offline: true,
     is_server_method: false
   };
-
   rootStore.dispatch('payment/addMethod', paymentMethodConfigCC);
   rootStore.dispatch('payment/addMethod', paymentMethodConfigSepa);
   rootStore.dispatch('payment/addMethod', paymentMethodConfigPayPal);
@@ -82,7 +77,7 @@ export function afterRegistration ({ Vue, config, store, isServer }) {
     const Payone1 = document.createElement('script');
     Payone1.setAttribute(
       'src',
-      'https://secure.pay1.de/client-api/js/v1/payone_hosted.js' // TODO: https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js
+      'https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js'
     );
     document.head.appendChild(Payone1);
     // Mount the info component when required.
@@ -104,7 +99,6 @@ export function afterRegistration ({ Vue, config, store, isServer }) {
             switch (paymentMethodCode) {
               case 'payone_creditcard':
                 correctPaymentMethod = true;
-
                 Component = Vue.extend(CreditCardComponent);
                 break;
               case 'payone_debit_payment':
@@ -114,7 +108,6 @@ export function afterRegistration ({ Vue, config, store, isServer }) {
               case 'payone_wallet_paypal_express':
                 correctPaymentMethod = true;
                 Component = Vue.extend(PayPalComponent);
-
                 break;
               case 'payone_online_bank_transfer_sofortueberweisung':
                 correctPaymentMethod = true;

@@ -11,16 +11,13 @@ export const OrderReview = {
     }
   },
   data () {
-      config.paymentMethods.paypal.id,
-      config.paymentMethods.cc.id,
-      config.paymentMethods.sepa.id,
-      config.paymentMethods.sofort.id
     return {
       preauthApi: config.api.url + '/api/payone/preauthorization',
       pmiPaypal: config.paymentMethods.paypal.id,
       pmiCC: config.paymentMethods.cc.id,
       pmiSepa: config.paymentMethods.sepa.id,
       pmiSofort: config.paymentMethods.sofort.id,
+      redirecturlWlt: '',
       isFilled: false,
       orderReview: {
         terms: false
@@ -34,6 +31,7 @@ export const OrderReview = {
     })
   },
   methods: {
+
     placeOrder () {
       const paymentDetails = this.$store.state.checkout.paymentDetails;
       console.log('THB: paymentMethod', paymentDetails.paymentMethod);
@@ -117,8 +115,8 @@ export const OrderReview = {
           }
           this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
           // console.log(this.$store.state.checkout.paymentDetails)
-          alert('Sie werden an den Zahlungsdienstleister weitergeleitet.')
-          window.location.replace(res.redirecturl);
+          this.redirecturlWlt = res.redirecturl
+          this.$bus.$emit('modal-toggle', 'modal-redirect')
         } else {
           return 0
         }
@@ -126,13 +124,18 @@ export const OrderReview = {
       (err) => {
         console.log('THB: exectuing ', paymentMethod, 'Error: ', err)
       })
+    },    
+    redirectMethod(){
+      this.$bus.$emit('modal-hide', 'modal-redirect')
+      window.location.replace(this.redirecturlWlt);
+      this.redirecturlWlt = ''
     },
     addLinks () {
       Logger.debug('THB: currentCartHash', this.currentCartHash)()
       return {
-        successurl: config.payone.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=1',
-        errorurl: config.payone.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=2',
-        backurl: config.payone.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=3'
+        successurl: config.paymentMethods.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=1',
+        errorurl: config.paymentMethods.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=2',
+        backurl: config.paymentMethods.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=3'
       }
     },
 

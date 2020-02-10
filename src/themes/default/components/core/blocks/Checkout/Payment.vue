@@ -312,6 +312,20 @@
         </div>
       </div>
     </div>
+
+    <modal name="modal-sepa">
+      <p slot="header">
+        Sepa Mandate
+      </p>
+      <div slot="content" style="width:100%">
+        <span v-html="confirmSepaMandateText" />
+        <div class="">
+          <button-full @click.native="testMethod">
+            Approve Mandate
+          </button-full>
+        </div>
+      </div>
+    </modal>
   </div>
 </template>
 
@@ -325,6 +339,7 @@ import BaseInput from 'theme/components/core/blocks/Form/BaseInput'
 import BaseSelect from 'theme/components/core/blocks/Form/BaseSelect'
 import ButtonFull from 'theme/components/theme/ButtonFull'
 import Tooltip from 'theme/components/core/Tooltip'
+import Modal from 'theme/components/core/Modal'
 
 export default {
   components: {
@@ -332,9 +347,15 @@ export default {
     BaseInput,
     BaseSelect,
     ButtonFull,
-    Tooltip
+    Tooltip,
+    Modal
   },
   mixins: [Payment],
+  data () {
+    return {
+      confirmSepaMandateText: 'test'
+    }
+  },
   computed: {
     countryOptions () {
       return this.countries.map((item) => {

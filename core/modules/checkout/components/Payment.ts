@@ -21,7 +21,8 @@ export const Payment = {
       payment: this.$store.state.checkout.paymentDetails,
       generateInvoice: false,
       sendToShippingAddress: false,
-      sendToBillingAddress: false
+      sendToBillingAddress: false,
+      confirmSepaMandateText: 'test2'
     };
   },
   computed: {
@@ -115,14 +116,29 @@ export const Payment = {
         );
       }
     },
+    helperParseResponse (test) {
+      const data = test.toString().split(RegExp('\\n'))
+      const obj = {}
+      data.forEach(item => {
+        // console.log(item)
+        const splitAt = item.indexOf('=');
+        if (splitAt === -1) { return item } else {
+          const p1 = item.slice(0, splitAt)
+          const p2 = item.slice(splitAt + 1, item.length)
+          obj[p1] = p2;
+          // console.log('p1p2:', p1,'  ', p2)
+        }
+      })
+      return obj
+    },
     confirmSepaMandate (res) {
-      if (confirm('SPEA LASTSCHRIFT MANDAT' + decodeURIComponent(res))) {
-        console.log('OK')
-        return true;
-      } else {
-        console.log('BACK TO PAYMENT')
-        return false;
-      }
+      var obj1 = this.helperParseResponse(res)
+      console.log('confirmSepaMandate', obj1)
+      res = decodeURIComponent(obj1.mandate_text).replace(/\+/gm," ")
+      this.confirmSepaMandateText = res
+      this.$bus.$emit('modal-toggle', 'modal-sepa')
+
+      return true;
     },
     getAmount () {
       const totals = this.$store.getters['cart/getTotals']
@@ -178,16 +194,12 @@ export const Payment = {
       if (sepaData.complete === true) {
         this.callApiManagemandate(sepaData)
           .then((res) => {
-            if (confirm('SPEA LASTSCHRIFT MANDAT' + decodeURIComponent(res))) {
-              that.payment.paymentMethodAdditional =
+            this.confirmSepaMandate(res)
+            that.payment.paymentMethodAdditional =
                 {
                   ...that.payment.paymentMethodAdditional,
                   ...sepaData
                 }
-              that.sendDataToCheckoutEmitEvent();
-            } else {
-              alert('Re-adjust your Payment')
-            }
           }, (err) => {
             console.log(err);
             alert('Something went wrong wihle transfering your Payment-Data. Try it again.' + err.errorMessage);
@@ -196,6 +208,10 @@ export const Payment = {
       } else {
         alert('Eingabe unzulänglich.');
       }
+    },
+    testMethod(){
+      this.$bus.$emit('modal-hide', 'modal-sepa')
+      this.sendDataToCheckoutEmitEvent()
     },
     excecuteSb () {
       const sepaData = window['checkSbComplete']();
