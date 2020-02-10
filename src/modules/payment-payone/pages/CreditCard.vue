@@ -23,21 +23,20 @@
         >
         <div class="select-row">
           <div class="select-container">
-
-        <select
-          id="cardtypeCC"
-          @change="onSelectChange($event)"
-        >
-          <option value="V">
-            VISA
-          </option>
-          <option value="M">
-            Mastercard
-          </option>
-          <option value="A">
-            Amex
-          </option>
-        </select>
+            <select
+              id="cardtypeCC"
+              @change="onSelectChange($event)"
+            >
+              <option value="V">
+                VISA
+              </option>
+              <option value="M">
+                Mastercard
+              </option>
+              <option value="A">
+                Amex
+              </option>
+            </select>
             <label for="cardtypeCC">Card type</label>
           </div>
         </div>
