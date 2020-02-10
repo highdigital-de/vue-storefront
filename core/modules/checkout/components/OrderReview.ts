@@ -11,17 +11,13 @@ export const OrderReview = {
     }
   },
   data () {
-    console.log('config.payone:',
-      config.payone.paymentMethodId.paypal,
-      config.payone.paymentMethodId.cc,
-      config.payone.paymentMethodId.sepa,
-      config.payone.paymentMethodId.sofort)
     return {
       preauthApi: config.api.url + '/api/payone/preauthorization',
-      pmiPaypal: config.payone.paymentMethodId.paypal,
-      pmiCC: config.payone.paymentMethodId.cc,
-      pmiSepa: config.payone.paymentMethodId.sepa,
-      pmiSofort: config.payone.paymentMethodId.sofort,
+      pmiPaypal: config.paymentMethods.paypal.id,
+      pmiCC: config.paymentMethods.cc.id,
+      pmiSepa: config.paymentMethods.sepa.id,
+      pmiSofort: config.paymentMethods.sofort.id,
+      redirecturlWlt: '',
       isFilled: false,
       orderReview: {
         terms: false
@@ -35,6 +31,7 @@ export const OrderReview = {
     })
   },
   methods: {
+
     placeOrder () {
       const paymentDetails = this.$store.state.checkout.paymentDetails;
       console.log('THB: paymentMethod', paymentDetails.paymentMethod);
@@ -84,9 +81,6 @@ export const OrderReview = {
         ...pMA,
         clearingtype: 'cc',
         payone_config_payment_method_id: this.pmiCC
-        //        cardtype: pMA.cardtype,
-        //        cardexpiredate: pMA.cardexpiredate,
-        //       pseudocardpan: pMA.pseudocardpan
       }
       this.callPreauthApi(body, 'CreditCard', paymentDetails)
     },
@@ -99,9 +93,7 @@ export const OrderReview = {
         ...pMA,
         clearingtype: 'elv',
         payone_config_payment_method_id: this.pmiSepa
-        //        bankcountry: pMA.bankcountry,
-        //        iban: pMA.iban,
-        //        bic: pMA.bic
+
       }
       this.callPreauthApi(body, 'SEPA', paymentDetails)
     },
@@ -123,8 +115,8 @@ export const OrderReview = {
           }
           this.$store.dispatch('checkout/savePaymentDetails', paymentDetails)
           // console.log(this.$store.state.checkout.paymentDetails)
-          alert('Sie werden an den Zahlungsdienstleister weitergeleitet.')
-          window.location.replace(res.redirecturl);
+          this.redirecturlWlt = res.redirecturl
+          this.$bus.$emit('modal-toggle', 'modal-redirect')
         } else {
           return 0
         }
@@ -132,13 +124,18 @@ export const OrderReview = {
       (err) => {
         console.log('THB: exectuing ', paymentMethod, 'Error: ', err)
       })
+    },    
+    redirectMethod(){
+      this.$bus.$emit('modal-hide', 'modal-redirect')
+      window.location.replace(this.redirecturlWlt);
+      this.redirecturlWlt = ''
     },
     addLinks () {
       Logger.debug('THB: currentCartHash', this.currentCartHash)()
       return {
-        successurl: config.payone.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=1',
-        errorurl: config.payone.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=2',
-        backurl: config.payone.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=3'
+        successurl: config.paymentMethods.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=1',
+        errorurl: config.paymentMethods.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=2',
+        backurl: config.paymentMethods.hostUrlForRedirectBack + '?h=' + this.currentCartHash + '&a=3'
       }
     },
 

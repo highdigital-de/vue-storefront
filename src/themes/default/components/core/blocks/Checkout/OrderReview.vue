@@ -104,6 +104,20 @@
         </p>
       </div>
     </modal>
+
+    <modal name="modal-redirect">
+      <p slot="header">
+        Redirect
+      </p>
+      <div slot="content" style="width:100%">
+        <p> Sie werden zum Zahlungsdienstleister weitergeleitet. </p>
+        <div class="">
+          <button-full @click.native="redirectMethod">
+            Ok
+          </button-full>
+        </div>
+      </div>
+    </modal>
   </div>
 </template>
 
