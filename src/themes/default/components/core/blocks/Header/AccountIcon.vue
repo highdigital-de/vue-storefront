@@ -55,7 +55,9 @@ export default {
         { title: this.$t('My orders'), link: '/my-account/orders' },
         { title: this.$t('My loyalty card'), link: '#' },
         { title: this.$t('My product reviews'), link: '#' },
-        { title: this.$t('My Recently viewed products'), link: '/my-account/recently-viewed' }
+        { title: this.$t('My Recently viewed products'), link: '/my-account/recently-viewed' },
+        { title: this.$t('My payment details'), link: '/my-account/paymentdetails' }
+
       ]
     }
   },

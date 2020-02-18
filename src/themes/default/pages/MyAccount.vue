@@ -1,5 +1,8 @@
 <template>
   <div id="my_account">
+    <div id="Payone1" />
+    <!--div id="payone_creditcard" /-->
+
     <div class="bg-cl-secondary py35 pl20">
       <div class="container">
         <breadcrumbs
@@ -44,6 +47,7 @@ import MyNewsletter from '../components/core/blocks/MyAccount/MyNewsletter'
 import MyOrders from '../components/core/blocks/MyAccount/MyOrders'
 import MyOrder from '../components/core/blocks/MyAccount/MyOrder'
 import MyRecentlyViewed from '../components/core/blocks/MyAccount/MyRecentlyViewed'
+import MyPaymentdetails from '../../../../src/modules/payment-payone/pages/MyPaymentdetails'
 import NoSSR from 'vue-no-ssr'
 
 export default {
@@ -56,7 +60,8 @@ export default {
         { title: this.$t('My orders'), link: '/my-account/orders' },
         { title: this.$t('My loyalty card'), link: '#' },
         { title: this.$t('My product reviews'), link: '#' },
-        { title: this.$t('My Recently viewed products'), link: '/my-account/recently-viewed' }
+        { title: this.$t('My Recently viewed products'), link: '/my-account/recently-viewed' },
+        { title: 'My payment details', link: '/my-account/paymentdetails' }
       ]
     }
   },
@@ -68,6 +73,7 @@ export default {
     MyOrders,
     MyOrder,
     MyRecentlyViewed,
+    MyPaymentdetails,
     'no-ssr': NoSSR
   },
   mixins: [MyAccount],

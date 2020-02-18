@@ -15,14 +15,13 @@ export const Payment = {
   },
   data () {
     return {
-      preauthApi: config.api.url + '/api/payone/preauthorization',
       isFilled: false,
       countries: Countries,
       payment: this.$store.state.checkout.paymentDetails,
       generateInvoice: false,
       sendToShippingAddress: false,
       sendToBillingAddress: false,
-      confirmSepaMandateText: 'test2'
+      confirmSepaMandateText: ''
     };
   },
   computed: {
@@ -135,6 +134,12 @@ export const Payment = {
       var obj1 = this.helperParseResponse(res)
       console.log('confirmSepaMandate', obj1)
       res = decodeURIComponent(obj1.mandate_text).replace(/\+/gm," ")
+      if (res === '') {
+        res = 'Für die angegebene Iban existiert bereits ein SEPA-Mandat. Möchten Sie die Kontodaten aktualisieren?'
+        // IF RES === '' dann kein neues mandate anfordern sondern 
+        // 1. Userid
+        // 2. UpdateUser schicken an Payone
+      }
       this.confirmSepaMandateText = res
       this.$bus.$emit('modal-toggle', 'modal-sepa')
 
@@ -209,7 +214,7 @@ export const Payment = {
         alert('Eingabe unzulänglich.');
       }
     },
-    testMethod(){
+    approveSepa(){
       this.$bus.$emit('modal-hide', 'modal-sepa')
       this.sendDataToCheckoutEmitEvent()
     },

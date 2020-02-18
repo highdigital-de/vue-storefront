@@ -320,7 +320,7 @@
       <div slot="content" style="width:100%">
         <span v-html="confirmSepaMandateText" />
         <div class="">
-          <button-full @click.native="testMethod">
+          <button-full @click.native="approveSepa">
             Approve Mandate
           </button-full>
         </div>
@@ -353,7 +353,7 @@ export default {
   mixins: [Payment],
   data () {
     return {
-      confirmSepaMandateText: 'test'
+      confirmSepaMandateText: ''
     }
   },
   computed: {
