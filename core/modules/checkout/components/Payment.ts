@@ -40,9 +40,9 @@ export const Payment = {
       this.notInMethods(this.payment.paymentMethod)
     ) {
       this.payment.paymentMethod = '';
-        /*this.paymentMethods.length > 0
+      /* this.paymentMethods.length > 0
           ? this.paymentMethods[0].code
-          : 'cashondelivery';*/
+          : 'cashondelivery'; */
     }
   },
   mounted () {
@@ -136,9 +136,9 @@ export const Payment = {
       res = decodeURIComponent(obj1.mandate_text).replace(/\+/gm," ")
       if (res === '') {
         res = 'Für die angegebene Iban existiert bereits ein SEPA-Mandat. Möchten Sie die Kontodaten aktualisieren?'
-        // IF RES === '' dann kein neues mandate anfordern sondern 
-        // 1. Userid
-        // 2. UpdateUser schicken an Payone
+        // TODO: --> Link auf MyPaymentDetails Einfügen
+        // IF RES === '' dann kein neues mandate anfordern sondern
+        // 1. Für gegebene userid ein UpdateUser an Payone schicken
       }
       this.confirmSepaMandateText = res
       this.$bus.$emit('modal-toggle', 'modal-sepa')
@@ -302,7 +302,7 @@ export const Payment = {
                 zipCode: addresses[i].postcode,
                 taxId: addresses[i].vat_id,
                 phoneNumber: addresses[i].telephone,
-                paymentMethod: '',//this.paymentMethods[0].code
+                paymentMethod: ''// this.paymentMethods[0].code
               };
               this.generateInvoice = true;
               this.sendToBillingAddress = true;
@@ -326,7 +326,7 @@ export const Payment = {
           phoneNumber: '',
           taxId: '',
           paymentMethod: ''
-            //this.paymentMethods.length > 0 ? this.paymentMethods[0].code : ''
+          // this.paymentMethods.length > 0 ? this.paymentMethods[0].code : ''
         };
       }
     },
@@ -351,8 +351,8 @@ export const Payment = {
         apartmentNumber: this.shippingDetails.apartmentNumber,
         zipCode: this.shippingDetails.zipCode,
         phoneNumber: this.shippingDetails.phoneNumber,
-        paymentMethod:''
-          //this.paymentMethods.length > 0 ? this.paymentMethods[0].code : ''
+        paymentMethod: ''
+        // this.paymentMethods.length > 0 ? this.paymentMethods[0].code : ''
       };
     },
     useBillingAddress () {
@@ -375,10 +375,10 @@ export const Payment = {
               zipCode: addresses[i].postcode,
               taxId: addresses[i].vat_id,
               phoneNumber: addresses[i].telephone,
-              paymentMethod:''
-                /*this.paymentMethods.length > 0
+              paymentMethod: ''
+              /* this.paymentMethods.length > 0
                   ? this.paymentMethods[0].code
-                  : ''*/
+                  : '' */
             };
             this.generateInvoice = true;
           }

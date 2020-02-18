@@ -52,7 +52,7 @@ import { PaymentPayone } from './payment-payone';
  * In VS 1.8 this modules will be seamlessly lazyLoaded after proper action dispatch
  * - Wishlist
  */
-export const registerModules: VueStorefrontModule[]=[
+export const registerModules: VueStorefrontModule[] = [
   Checkout,
   Catalog,
   Cart,

@@ -124,8 +124,8 @@ export const OrderReview = {
       (err) => {
         console.log('THB: exectuing ', paymentMethod, 'Error: ', err)
       })
-    },    
-    redirectMethod(){
+    },
+    redirectMethod () {
       this.$bus.$emit('modal-hide', 'modal-redirect')
       window.location.replace(this.redirecturlWlt);
       this.redirecturlWlt = ''
