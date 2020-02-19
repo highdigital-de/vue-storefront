@@ -1,6 +1,6 @@
 module.exports = {
   base: '/',
-  port: 8081,
+  port: 18080,
   markdown: {
     toc: {
       includeLevel: [2]

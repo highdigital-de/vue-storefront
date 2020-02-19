@@ -179,8 +179,8 @@ export default {
         fetch(url, {
           method: 'POST',
           headers: {
-            'Access-Control-Allow-Origin': 'http://localhost:8081',
-            'Access-Control-Expose-Headers': 'http://localhost:3000',
+            'Access-Control-Allow-Origin': 'http://localhost:' + config.api.port,
+            'Access-Control-Expose-Headers': 'http://localhost:' + config.server.port,
             'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
             'Content-Type': 'application/json',
             'withCredentials': 'true'

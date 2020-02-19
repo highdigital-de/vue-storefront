@@ -267,7 +267,7 @@ export default {
   },
   data: function () {
     return {
-      api: 'http://localhost:18083', // this.config.api.url
+      api: config.api.url,
       payone_user_id: this.$store.state.user.current.payone_user_id,
       confirmSepaMandateText: 'test',
       countryOptions: [ {value: 'DE', label: 'Germany'}, {value: 'AT', label: 'Austria'} ],
@@ -342,8 +342,8 @@ export default {
         fetch(url, {
           method: 'POST',
           headers: {
-            'Access-Control-Allow-Origin': 'http://localhost:8081',
-            'Access-Control-Expose-Headers': 'http://localhost:3000',
+            'Access-Control-Allow-Origin': 'http://localhost:' + config.api.port,
+            'Access-Control-Expose-Headers': 'http://localhost:' + config.server.port,
             'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
             'Content-Type': 'application/json',
             'withCredentials': 'true'
@@ -427,8 +427,8 @@ export default {
         fetch(url, {
           method: 'POST',
           headers: {
-            'Access-Control-Allow-Origin': 'http://localhost:8081',
-            'Access-Control-Expose-Headers': 'http://localhost:3000',
+            'Access-Control-Allow-Origin': 'http://localhost:' + config.api.port,
+            'Access-Control-Expose-Headers': 'http://localhost:' + config.server.port,
             'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
             'Content-Type': 'application/json',
             'withCredentials': 'true'

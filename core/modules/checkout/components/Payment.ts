@@ -133,7 +133,7 @@ export const Payment = {
     confirmSepaMandate (res) {
       var obj1 = this.helperParseResponse(res)
       console.log('confirmSepaMandate', obj1)
-      res = decodeURIComponent(obj1.mandate_text).replace(/\+/gm," ")
+      res = decodeURIComponent(obj1.mandate_text).replace(/\+/gm, ' ')
       if (res === '') {
         res = 'Für die angegebene Iban existiert bereits ein SEPA-Mandat. Möchten Sie die Kontodaten aktualisieren?'
         // TODO: --> Link auf MyPaymentDetails Einfügen
@@ -214,7 +214,7 @@ export const Payment = {
         alert('Eingabe unzulänglich.');
       }
     },
-    approveSepa(){
+    approveSepa () {
       this.$bus.$emit('modal-hide', 'modal-sepa')
       this.sendDataToCheckoutEmitEvent()
     },
@@ -240,8 +240,8 @@ export const Payment = {
         fetch(url, {
           method: 'POST',
           headers: {
-            'Access-Control-Allow-Origin': 'http://localhost:8081',
-            'Access-Control-Expose-Headers': 'http://localhost:3000',
+            'Access-Control-Allow-Origin': 'http://localhost:' + config.api.port,
+            'Access-Control-Expose-Headers': 'http://localhost:' + config.server.port,
             'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
             'Content-Type': 'application/json',
             'withCredentials': 'true'
